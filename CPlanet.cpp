@@ -36,26 +36,6 @@ CPlanet::CPlanet(float mass, CCoordSet ccs, string name,Par* par, CSolarSystem* 
 CPlanet::~CPlanet() {
 
 }
-/*
-float CPlanet::potential(){
-	float total = 0;
-	for (vector<CPlanet>::const_iterator it = m_ss->m_planets.begin();it < m_ss->m_planets.end(); it++) {
-		if(it->m_name!=m_name){
-			float r = m_dynamics.m_position.distance(it->m_dynamics.m_position);
-			total-=m_par->G*m_mass*it->m_mass/r;
-		}
-	}
-	return total;
-}
-*/
-float CPlanet::kinetic(){
-	return .5*m_mass*m_dynamics.m_velocity.magSquared();
-}
-/*
-float CPlanet::totalEnergy(){
-	return kinetic()+potential();
-}
-*/
 
 CSVector CPlanet::calcForce(CSolarSystem* ss){
 	CSVector zero;
@@ -65,5 +45,14 @@ CSVector CPlanet::calcForce(CSolarSystem* ss){
 float CPlanet::calcEccentricity(){
 	return 0;
 
+}
+void CPlanet::setDynamics(CCoordSet newSet){
+	m_dynamics = newSet;
+	if(m_dynamics.m_position.mag() > m_aphelion){
+		m_aphelion = m_dynamics.m_position.mag();
+	} else if(m_dynamics.m_position.mag() < m_perihelion){
+		m_perihelion = m_dynamics.m_position.mag();
+	}
+	return;
 }
 

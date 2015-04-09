@@ -26,19 +26,23 @@ public:
 	Par* m_par;
 	CSolarSystem* m_ss;
 	float m_mass;
-	CCoordSet m_dynamics;
 	string m_name;
-	float potential();
-	float kinetic();
-	float totalEnergy();
+
+	float m_perihelion; //closest to sun
+	float m_aphelion; // furthest from sun
+
 	CSVector calcForce(CSolarSystem* ss);
 	float calcEccentricity();
+
+	CCoordSet getDynamics(){return m_dynamics;}
+	void setDynamics(CCoordSet newSet);
 
 	friend ostream &operator<<( ostream &output, const CPlanet &D ){
 						output<<D.m_name<<": "<<D.m_mass<<"kg\n"<<D.m_dynamics<<"\n";
 					    return output;
 		}
-
+private:
+	CCoordSet m_dynamics;
 
 };
 
