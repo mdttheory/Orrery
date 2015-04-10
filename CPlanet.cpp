@@ -6,11 +6,15 @@
  */
 
 #include "CPlanet.h"
+#include <cmath>
+using namespace std;
 
 CPlanet::CPlanet() {
 	m_par = NULL;
 	m_ss = NULL;
 	m_mass = -1;
+	m_perihelion = -1;
+	m_aphelion = -1;
 	m_dynamics = CCoordSet();
 	m_name = "uninitialized";
 	cout << "ERROR: default constructor of CPlanet called\n";
@@ -23,14 +27,18 @@ CPlanet::CPlanet(const CPlanet& rhs) {
 	m_mass = rhs.m_mass;
 	m_dynamics = rhs.m_dynamics;
 	m_name = rhs.m_name;
+	m_perihelion = rhs.m_perihelion;
+	m_aphelion = rhs.m_aphelion;
 }
 
-CPlanet::CPlanet(float mass, CCoordSet ccs, string name,Par* par, CSolarSystem* ss) {
+CPlanet::CPlanet(float mass, float peri, float ap, CCoordSet ccs, string name, Par* par, CSolarSystem* ss) {
 	m_ss = ss;
 	m_par = par;
 	m_mass = mass;
 	m_dynamics = ccs;
 	m_name = name;
+	m_perihelion = peri;
+	m_aphelion = ap;
 }
 
 CPlanet::~CPlanet() {
@@ -54,5 +62,12 @@ void CPlanet::setDynamics(CCoordSet newSet){
 		m_perihelion = m_dynamics.m_position.mag();
 	}
 	return;
+}
+
+float CPlanet::calcTheorVel()
+{
+	float a = (m_perihelion+m_aphelion)/2;
+	if (a == 0) return -1;
+	return sqrt(m_par->G*m_mass*(2.0/m_dynamics.m_position.mag()-1.0/a));
 }
 
