@@ -15,6 +15,7 @@ struct Par{
 	float G = 6.6738480 * pow(10,-11);//m3kg-1s-2
 	float SolarMass = 1.98855*pow(10.0,30.0);
 	float AU = 149597870700;//m
+	float dt = .1;
 
 };
 
