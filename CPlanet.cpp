@@ -17,6 +17,7 @@ CPlanet::CPlanet() {
 	m_aphelion = -1;
 	m_dynamics = CCoordSet();
 	m_name = "uninitialized";
+	m_angle = -1;
 	cout << "ERROR: default constructor of CPlanet called\n";
 	return;
 }
@@ -29,9 +30,10 @@ CPlanet::CPlanet(const CPlanet& rhs) {
 	m_name = rhs.m_name;
 	m_perihelion = rhs.m_perihelion;
 	m_aphelion = rhs.m_aphelion;
+	m_angle = rhs.m_angle;
 }
 
-CPlanet::CPlanet(float mass, float peri, float ap, CCoordSet ccs, string name, Par* par, CSolarSystem* ss) {
+CPlanet::CPlanet(float angle, float mass, float peri, float ap, CCoordSet ccs, string name, Par* par, CSolarSystem* ss) {
 	m_ss = ss;
 	m_par = par;
 	m_mass = mass;
@@ -39,6 +41,7 @@ CPlanet::CPlanet(float mass, float peri, float ap, CCoordSet ccs, string name, P
 	m_name = name;
 	m_perihelion = peri;
 	m_aphelion = ap;
+	m_angle = angle;
 }
 
 CPlanet::~CPlanet() {
@@ -67,7 +70,7 @@ void CPlanet::setDynamics(CCoordSet newSet){
 float CPlanet::calcTheorVel()
 {
 	float a = (m_perihelion+m_aphelion)/2;
-	if (a == 0) return -1;
+	if (a == 0) return 0;
 	return sqrt(m_par->G*m_mass*(2.0/m_dynamics.m_position.mag()-1.0/a));
 }
 

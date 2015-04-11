@@ -23,7 +23,7 @@ int main()
 
 	Par par;
 	CSolarSystem newSS(&par);
-	cout << newSS << "\n";
+	//cout << newSS << "\n";
 	cout << "0 Kinetic " << newSS.kinetic()[0] << "\n";
 	cout << "1 Kinetic " << newSS.kinetic()[1] << "\n";
 	cout << "0 Potential " << newSS.potential()[0] << "\n";
@@ -31,15 +31,13 @@ int main()
 	cout << "0 Total " << newSS.totalEnergy(newSS.kinetic(),newSS.potential())[0] << "\n";
 	cout << "1 Total " << newSS.totalEnergy(newSS.kinetic(),newSS.potential())[1] << "\n";
 
-	pos_stream << newSS;
-	/*
-	for (vector<CPlanet>::iterator it = m_planets.begin();it < m_planets.end(); it++) {
-		pos_stream << it->getDynamicsPtr()->m_position.m_x
+	cout << "Size of newSS: " << newSS.m_planets.size() << "\n";
+
+	for (vector<CPlanet>::iterator it = newSS.m_planets.begin();it < newSS.m_planets.end(); it++) {
+		pos_stream << (*(it->getDynamicsPtr())).m_position << "\n";
 	}
-	*/
 
-
-
+	pos_of.close();
 	return 0;
 }
 

@@ -20,13 +20,15 @@ class CPlanet {
 public:
 	CPlanet();
 	CPlanet(const CPlanet& rhs);
-	CPlanet(float mass, float peri, float ap, CCoordSet ccs, string name,Par* par, CSolarSystem* ss);
+	CPlanet(float angle, float mass, float peri, float ap, CCoordSet ccs, string name,
+			Par* par, CSolarSystem* ss);
 	virtual ~CPlanet();
 
 	Par* m_par;
 	CSolarSystem* m_ss;
 	float m_mass;
 	string m_name;
+	float m_angle;
 
 	float m_aphelion; // furthest from sun
 	float m_perihelion;
@@ -36,14 +38,18 @@ public:
 	CSVector calcForce(CSolarSystem* ss);
 	float calcEccentricity();
 
-	CCoordSet getDynamics(){return m_dynamics;}
-	CCoordSet* getDynamicsPtr(){return &m_dynamics;}
+	CCoordSet getDynamics() {
+		return m_dynamics;
+	}
+	CCoordSet* getDynamicsPtr() {
+		return &m_dynamics;
+	}
 	void setDynamics(CCoordSet newSet);
 
-	friend ostream &operator<<( ostream &output, const CPlanet &D ){
-						output<<D.m_name<<": "<<D.m_mass<<"kg\n"<<D.m_dynamics<<"\n";
-					    return output;
-		}
+	friend ostream &operator<<(ostream &output, const CPlanet &D) {
+		output << D.m_name << ": " << D.m_mass << "kg\n" << D.m_dynamics << "\n";
+		return output;
+	}
 private:
 	CCoordSet m_dynamics;
 

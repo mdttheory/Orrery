@@ -22,8 +22,9 @@ public:
 	CSVector m_acceleration;
 
 	friend ostream &operator<<( ostream &output, const CCoordSet &D ){
-					output<<"Pos:"<<D.m_position<<"\nVel:"<<D.m_velocity<<"\nAcc:"<<D.m_acceleration<<"\n";
-				    return output;
+		output << "Pos:" << D.m_position << "\nVel:" << D.m_velocity << "\nAcc:"
+				<< D.m_acceleration << "\n";
+		return output;
 		}
 };
 

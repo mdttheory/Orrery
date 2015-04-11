@@ -6,69 +6,73 @@
  */
 
 #include "CSolarSystem.h"
+#include <math.h>
 
 CSolarSystem::CSolarSystem() {
 	m_par = NULL;
 }
 
 CSolarSystem::CSolarSystem(Par* par) {
-	float sm = m_par->SolarMass;
 
+
+	m_par = par;
+	float sm = m_par->SolarMass;
 	CSVector zero;
 
 	//Sun
-	m_par = par;
 	CCoordSet ccs_Sun(zero,zero,zero);
-	CPlanet Sun(sm,0,0, ccs_Sun, string("Sun"),m_par,this);
+	CPlanet Sun(0,sm,0,0, ccs_Sun, string("Sun"),m_par,this);
 	m_planets.push_back(Sun);
 	{
 	//Mercury
 	CCoordSet ccs_Mercury(zero,zero,zero);;
-	CPlanet Mercury(sm*1.66012*pow(10,-7),46001200000,69816900000, ccs_Mercury, string("Mercury"),m_par,this);
+	CPlanet Mercury(0.110653875,sm*1.66012*pow(10,-7),46001200000,69816900000, ccs_Mercury, string("Mercury"),m_par,this);
 	m_planets.push_back(Mercury);
 	}{
 	//Venus
 	CCoordSet ccs_Venus(zero,zero,zero);;
-	CPlanet Venus(sm*2.44781*pow(10,-6),107477000000,108939000000, ccs_Venus, string("Venus"),m_par,this);
+	CPlanet Venus(0.0382227106,sm*2.44781*pow(10,-6),107477000000,108939000000, ccs_Venus, string("Venus"),m_par,this);
 	m_planets.push_back(Venus);
 	}{
 	//Earth
 	CCoordSet ccs_Earth(zero,zero,zero);;
-	CPlanet Earth(sm*3.003467*pow(10,-6),147095000000,151930000000, ccs_Earth, string("Earth"),m_par,this);
+	CPlanet Earth(0.0274016693,sm*3.003467*pow(10,-6),147095000000,151930000000, ccs_Earth, string("Earth"),m_par,this);
 	m_planets.push_back(Earth);
 	}{
 	//Mars
 	CCoordSet ccs_Mars(zero,zero,zero);;
-	CPlanet Mars(sm*3.22713*pow(10,-7),206700000000,249200000000, ccs_Mars, string("Mars"),m_par,this);
+	CPlanet Mars(0.0291469985,sm*3.22713*pow(10,-7),206700000000,249200000000, ccs_Mars, string("Mars"),m_par,this);
 	m_planets.push_back(Mars);
 	}{
 	//Jupiter
 	CCoordSet ccs_Jupiter(zero,zero,zero);;
-	CPlanet Jupiter(sm*9.5458*pow(10,-4),740573600000,816520800000, ccs_Jupiter, string("Jupiter"),m_par,this);
+	CPlanet Jupiter(0.00558505361,sm*9.5458*pow(10,-4),740573600000,816520800000, ccs_Jupiter, string("Jupiter"),m_par,this);
 	m_planets.push_back(Jupiter);
 	}{
 	//TODO Saturn pos/vel
 	CCoordSet ccs_Saturn(zero,zero,zero);;
-	CPlanet Saturn(sm*2.85812*pow(10,-4),1353572956000,1513325783000, ccs_Saturn, string("Saturn"),m_par,this);
+	CPlanet Saturn(0.016231562,sm*2.85812*pow(10,-4),1353572956000,1513325783000, ccs_Saturn, string("Saturn"),m_par,this);
 	m_planets.push_back(Saturn);
 	}{
 	//TODO Uranus pos/vel
 	CCoordSet ccs_Uranus(zero,zero,zero);;
-	CPlanet Uranus(sm*4.36576*pow(10,-5),2735118100000,3006224700000, ccs_Uranus, string("Uranus"),m_par,this);
+	CPlanet Uranus(0.0178023584,sm*4.36576*pow(10,-5),2735118100000,3006224700000, ccs_Uranus, string("Uranus"),m_par,this);
 	m_planets.push_back(Uranus);
 	}{
 	//TODO Neptune pos/vel
 	CCoordSet ccs_Neptune(zero,zero,zero);;
-	CPlanet Neptune(sm*5.15028*pow(10,-5),4459504400000,4537580900000, ccs_Neptune, string("Neptune"),m_par,this);
+	CPlanet Neptune(0.0125663706,sm*5.15028*pow(10,-5),4459504400000,4537580900000, ccs_Neptune, string("Neptune"),m_par,this);
 	m_planets.push_back(Neptune);
 	}{
 	//TODO Pluto pos/vel
 	CCoordSet ccs_Pluto(zero,zero,zero);;
-	CPlanet Pluto(sm*5.15028*pow(10,-5),4437000000000,7311000000000, ccs_Pluto, string("Pluto"),m_par,this);
+	CPlanet Pluto(0.296705973,sm*5.15028*pow(10,-5),4437000000000,7311000000000, ccs_Pluto, string("Pluto"),m_par,this);
 	m_planets.push_back(Pluto);
 	}
+	//cout << "m_aphelion*tan(0.296705973) = " << Pluto.m_aphelion*tan(0.296705973) << "\n";
 	for (vector<CPlanet>::iterator it = m_planets.begin();it < m_planets.end(); it++) {
 		it->getDynamicsPtr()->m_position.m_x=it->m_aphelion;
+		it->getDynamicsPtr()->m_position.m_z=it->m_aphelion*tan(it->m_angle);
 		it->getDynamicsPtr()->m_velocity.m_y=it->calcTheorVel();
 	}
 }
@@ -107,3 +111,17 @@ vector<double> CSolarSystem::totalEnergy(vector<double> kinetic, vector<double> 
 	return energies;
 }
 
+CSolarSystem CSolarSystem::RK4(){
+	CSolarSystem new_CSS = this;
+	float k1 = 0;
+	float k2 = 0;
+	float k3 = 0;
+	float k4 = 0;
+	CSVector x_i = 0;
+	CSVector v_i = 0;
+
+	for (vector<CPlanet>::iterator it = m_planets.begin();it < m_planets.end(); it++) {
+
+	}
+	return new_CSS;
+}
