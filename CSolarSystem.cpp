@@ -110,27 +110,3 @@ vector<double> CSolarSystem::totalEnergy(vector<double> kinetic, vector<double> 
 	}
 	return energies;
 }
-
-CSolarSystem CSolarSystem::RK4(){
-	// https://math.okstate.edu/people/yqwang/teaching/math4513_fall11/Notes/rungekutta.pdf
-	CSolarSystem new_CSS = this;
-	CSVector k1,k2,k3,k4
-	CSVector x_i;
-	CSVector v_i,v_2,v_3,v_4;
-
-	float dt = this->m_par->dt;
-
-	for (vector<CPlanet>::iterator it = m_planets.begin();it < m_planets.end(); it++) {
-		v_i = it->getDynamicsPtr()->m_velocity;
-		x_i = it->getDynamicsPtr()->m_position;
-		k1 = dt*v_i;
-		//TODO: Calc v_2
-		k2 = dt*v_2;
-		//TODO: Calc v_3
-		k3 = dt*v_3;
-		//TODO: Calc v_4
-		k4 = dt*v_4;
-		it->getDynamicsPtr()->m_position.m_x = x_i + (k1+2*k2+2*k3+k4)*(1/6.0);
-	}
-	return new_CSS;
-}

@@ -21,8 +21,6 @@ public:
 	virtual ~CSolarSystem();
 	vector<CPlanet> m_planets;
 	Par* m_par;
-
-	CSolarSystem RK4();
 	vector<double> potential();
 	vector<double> kinetic();
 	vector<double> totalEnergy(vector<double> kinetic, vector<double> potential);
