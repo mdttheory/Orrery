@@ -25,8 +25,8 @@ public:
 	float m_z;
 
 	friend ostream &operator<<( ostream &output, const CSVector &D ){
-					output<<D.m_x<<","<<D.m_y<<","<<D.m_z;
-				    return output;
+		output<<D.m_x<<","<<D.m_y<<","<<D.m_z;
+		return output;
 	}
 
 	CSVector operator+(const CSVector& rhs);

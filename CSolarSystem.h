@@ -29,6 +29,7 @@ public:
 		for (vector<CPlanet>::const_iterator it = D.m_planets.begin();it < D.m_planets.end(); it++) {
 			output << *it;
 		}
+		output << "-\n";
 		return output;
 	}
 

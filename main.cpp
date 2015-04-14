@@ -8,6 +8,7 @@
 #include "Parameters.cpp"
 #include <algorithm>
 #include <fstream>
+#include "CSimulation.h"
 
 using namespace std;
 
@@ -23,18 +24,15 @@ int main()
 
 	Par par;
 	CSolarSystem newSS(&par);
-	//cout << newSS << "\n";
-	cout << "0 Kinetic " << newSS.kinetic()[0] << "\n";
-	cout << "1 Kinetic " << newSS.kinetic()[1] << "\n";
-	cout << "0 Potential " << newSS.potential()[0] << "\n";
-	cout << "1 Potential " << newSS.potential()[1] << "\n";
-	cout << "0 Total " << newSS.totalEnergy(newSS.kinetic(),newSS.potential())[0] << "\n";
-	cout << "1 Total " << newSS.totalEnergy(newSS.kinetic(),newSS.potential())[1] << "\n";
+	cout << newSS << "\n";
 
-	cout << "Size of newSS: " << newSS.m_planets.size() << "\n";
+	CSimulation my_Sim(newSS, &par);
+	my_Sim.print_pos(pos_stream);
 
-	for (vector<CPlanet>::iterator it = newSS.m_planets.begin();it < newSS.m_planets.end(); it++) {
-		pos_stream << (*(it->getDynamicsPtr())).m_position << "\n";
+	for(unsigned int t = 0; t<par.maxTimeSteps; t++){
+		cout << "Timetstep " << t << " of " << par.maxTimeSteps << "\n";
+		my_Sim.update();
+		my_Sim.print_pos(pos_stream);
 	}
 
 	pos_of.close();

@@ -19,13 +19,14 @@ CSolarSystem::CSolarSystem(Par* par) {
 	float sm = m_par->SolarMass;
 	CSVector zero;
 
+	{
 	//Sun
 	CCoordSet ccs_Sun(zero,zero,zero);
 	CPlanet Sun(0,sm,0,0, ccs_Sun, string("Sun"),m_par,this);
 	m_planets.push_back(Sun);
-	{
+	}{
 	//Mercury
-	CCoordSet ccs_Mercury(zero,zero,zero);;
+	CCoordSet ccs_Mercury(zero,zero,zero);
 	CPlanet Mercury(0.110653875,sm*1.66012*pow(10,-7),46001200000,69816900000, ccs_Mercury, string("Mercury"),m_par,this);
 	m_planets.push_back(Mercury);
 	}{
@@ -71,8 +72,8 @@ CSolarSystem::CSolarSystem(Par* par) {
 	}
 	//cout << "m_aphelion*tan(0.296705973) = " << Pluto.m_aphelion*tan(0.296705973) << "\n";
 	for (vector<CPlanet>::iterator it = m_planets.begin();it < m_planets.end(); it++) {
-		it->getDynamicsPtr()->m_position.m_x=it->m_aphelion;
-		it->getDynamicsPtr()->m_position.m_z=it->m_aphelion*tan(it->m_angle);
+		it->getDynamicsPtr()->m_position.m_x=it->m_aphelion*cos(it->m_angle);
+		it->getDynamicsPtr()->m_position.m_z=it->m_aphelion*sin(it->m_angle);
 		it->getDynamicsPtr()->m_velocity.m_y=it->calcTheorVel();
 	}
 }

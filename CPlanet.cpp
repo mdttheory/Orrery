@@ -59,9 +59,11 @@ float CPlanet::calcEccentricity(){
 }
 void CPlanet::setDynamics(CCoordSet newSet){
 	m_dynamics = newSet;
-	if(m_dynamics.m_position.mag() > m_aphelion){
+	if(m_dynamics.m_position.mag() > 100*m_aphelion){
+		cout << "ERROR USING WORTHLESS APHELION FUNCTION\n";
 		m_aphelion = m_dynamics.m_position.mag();
-	} else if(m_dynamics.m_position.mag() < m_perihelion){
+	} else if(m_dynamics.m_position.mag() < .8*m_perihelion){
+		cout << "ERROR USING WORTHLESS APHELION FUNCTION\n";
 		m_perihelion = m_dynamics.m_position.mag();
 	}
 	return;
