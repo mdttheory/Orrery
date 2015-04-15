@@ -34,8 +34,8 @@ CSVector::~CSVector() {
 float CSVector::distance(const CSVector other)
 {
 	double dist = pow(double(m_x)-double(other.m_x),2);
-	dist = pow(double(m_y)-double(other.m_y),2);
-	dist = pow(double(m_z)-double(other.m_z),2);
+	dist += pow(double(m_y)-double(other.m_y),2);
+	dist += pow(double(m_z)-double(other.m_z),2);
 	return float(sqrt(dist));
 }
 

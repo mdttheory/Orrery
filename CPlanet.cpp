@@ -73,6 +73,6 @@ float CPlanet::calcTheorVel()
 {
 	float a = (m_perihelion+m_aphelion)/2;
 	if (a == 0) return 0;
-	return sqrt(m_par->G*m_mass*(2.0/m_dynamics.m_position.mag()-1.0/a));
+	return sqrt(m_par->G*m_par->SolarMass*(2.0/m_dynamics.m_position.mag()-1.0/a));
 }
 

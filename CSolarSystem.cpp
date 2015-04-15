@@ -67,7 +67,7 @@ CSolarSystem::CSolarSystem(Par* par) {
 	}{
 	//TODO Pluto pos/vel
 	CCoordSet ccs_Pluto(zero,zero,zero);;
-	CPlanet Pluto(0.296705973,sm*5.15028*pow(10,-5),4437000000000,7311000000000, ccs_Pluto, string("Pluto"),m_par,this);
+	CPlanet Pluto(0.296705973,sm*6.583*pow(10,-9),4437000000000,7311000000000, ccs_Pluto, string("Pluto"),m_par,this);
 	m_planets.push_back(Pluto);
 	}
 	//cout << "m_aphelion*tan(0.296705973) = " << Pluto.m_aphelion*tan(0.296705973) << "\n";

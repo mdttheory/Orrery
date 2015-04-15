@@ -26,13 +26,16 @@ int main()
 	CSolarSystem newSS(&par);
 	cout << newSS << "\n";
 
+
 	CSimulation my_Sim(newSS, &par);
 	my_Sim.print_pos(pos_stream);
 
-	for(unsigned int t = 0; t<par.maxTimeSteps; t++){
-		cout << "Timetstep " << t << " of " << par.maxTimeSteps << "\n";
+	for(unsigned long int t = 0; t<par.maxTimeSteps; t++){
 		my_Sim.update();
-		my_Sim.print_pos(pos_stream);
+		if(int(t)%par.print_freq==0){
+			cout << "Timestep " << t << " of " << par.maxTimeSteps << "\n";
+			my_Sim.print_pos(pos_stream);
+		}
 	}
 
 	pos_of.close();
