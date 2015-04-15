@@ -22,6 +22,7 @@ public:
 	CSVector CalcDv(float dt, vector<CPlanet> planets, unsigned short i);
 	CSVector CalcA(CSVector pos, string name, float dt);
 	void print_pos(ostream &pos_stream);
+	void print_en(ostream &en_stream, double init_en);
 	void update();
 	Par* m_par;
 	CSolarSystem m_SS;

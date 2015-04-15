@@ -10,6 +10,7 @@ f = open("data/raw_positions.txt")
 
 n = 0
 data = [[]]
+n2 = 0
 for line in f:
 	if line != '-\n':
 		data_aux = []
@@ -31,43 +32,44 @@ for i in range(0,len(sizes)):
 	sizes[i]=sizes[i]**.3
 
 for i in range(0,n):
-	fig = plt.figure()
-	ax = fig.add_subplot(111, projection='3d')
-	for j in range(0,len(data[i])):
-			ax.scatter(data[i][j][0], data[i][j][1], data[i][j][2],c=colors[j],s=sizes[j])
-	ax.set_xlabel('X (billion kilometers)')
-	ax.set_ylabel('Y (billion kilometers)')
-	ax.set_zlabel('Z (billion kilometers)')
-	plt.xlim([-8,8])
-	plt.ylim([-8,8])
-	ax.set_zlim([-8,8])
-	plt.title('Position at timestep '+str(i))
-	print ('saving figure ',i)
-	plt.savefig('images/PositionData'+str(i)+'.png', bbox_inches='tight')
-	plt.close()
+	if i%10 == 0:
+		fig = plt.figure()
+		ax = fig.add_subplot(111, projection='3d')
+		for j in range(0,len(data[i])):
+				ax.scatter(data[i][j][0], data[i][j][1], data[i][j][2],c=colors[j],s=sizes[j])
+		ax.set_xlabel('X (billion kilometers)')
+		ax.set_ylabel('Y (billion kilometers)')
+		ax.set_zlabel('Z (billion kilometers)')
+		plt.xlim([-8,8])
+		plt.ylim([-8,8])
+		ax.set_zlim([-8,8])
+		plt.title('Position at timestep '+str(i))
+		print ('saving figure ',i)
+		plt.savefig('images/PositionData'+str(i)+'.png', bbox_inches='tight')
+		plt.close()
 
-	fig = plt.figure()
-	ax = fig.add_subplot(111)
-	for j in range(0,len(data[i])):
-			ax.scatter(data[i][j][0], data[i][j][1],c=colors[j],s=sizes[j])
-	ax.set_xlabel('X (billion kilometers)')
-	ax.set_ylabel('Y (billion kilometers)')
-	plt.xlim([-2,2])
-	plt.ylim([-2,2])
-	plt.title('Position at timestep '+str(i))
-	plt.savefig('images/TopDown/TopDown'+str(i)+'.png', bbox_inches='tight')
-	plt.close()
+		fig = plt.figure()
+		ax = fig.add_subplot(111)
+		for j in range(0,len(data[i])):
+				ax.scatter(data[i][j][0], data[i][j][1],c=colors[j],s=sizes[j])
+		ax.set_xlabel('X (billion kilometers)')
+		ax.set_ylabel('Y (billion kilometers)')
+		plt.xlim([-8,8])
+		plt.ylim([-8,8])
+		plt.title('Position at timestep '+str(i))
+		plt.savefig('images/TopDown/TopDown'+str(i)+'.png', bbox_inches='tight')
+		plt.close()
 
-	fig = plt.figure()
-	ax = fig.add_subplot(111)
-	for j in range(0,len(data[i])):
-			ax.scatter(data[i][j][0], data[i][j][2],c=colors[j],s=sizes[j])
-	ax.set_xlabel('X (billion kilometers)')
-	ax.set_ylabel('Z (billion kilometers)')
-	plt.xlim([-8,8])
-	plt.ylim([-8,8])
-	plt.title('Position at timestep '+str(i))
-	plt.savefig('images/Front/Front'+str(i)+'.png', bbox_inches='tight')
-	plt.close()
+		fig = plt.figure()
+		ax = fig.add_subplot(111)
+		for j in range(0,len(data[i])):
+				ax.scatter(data[i][j][0], data[i][j][2],c=colors[j],s=sizes[j])
+		ax.set_xlabel('X (billion kilometers)')
+		ax.set_ylabel('Z (billion kilometers)')
+		plt.xlim([-8,8])
+		plt.ylim([-8,8])
+		plt.title('Position at timestep '+str(i))
+		plt.savefig('images/Front/Front'+str(i)+'.png', bbox_inches='tight')
+		plt.close()
 
 

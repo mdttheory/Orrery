@@ -81,7 +81,7 @@ CSolarSystem::CSolarSystem(Par* par) {
 CSolarSystem::~CSolarSystem() {
 }
 
-vector<double> CSolarSystem::potential(){
+vector<double> CSolarSystem::indPotential(){
 	short n = m_planets.size();
 	short i = 0;
 	vector<double> energies (n,1);
@@ -96,7 +96,7 @@ vector<double> CSolarSystem::potential(){
 	return energies;
 }
 
-vector<double> CSolarSystem::kinetic(){
+vector<double> CSolarSystem::indKinetic(){
 	vector<double> energies;
 	for (vector<CPlanet>::iterator it = m_planets.begin();it < m_planets.end(); it++) {
 		energies.push_back(double(.5)*it->m_mass*it->getDynamics().m_velocity.magSquared());
@@ -104,10 +104,72 @@ vector<double> CSolarSystem::kinetic(){
 	return energies;
 }
 
-vector<double> CSolarSystem::totalEnergy(vector<double> kinetic, vector<double> potential){
+vector<double> CSolarSystem::totalIndEnergy(vector<double> kinetic, vector<double> potential){
 	vector<double> energies;
 	for (unsigned int i = 0; i < kinetic.size(); i++){
 		energies.push_back(kinetic[i] + potential[i]);
 	}
 	return energies;
+}
+
+double CSolarSystem::potential(){
+	short n = m_planets.size();
+	short i = 0;
+	double total=0;
+	for(i = 0; i < n; i++){
+		for(short j = i + 1; j < n; j++){
+			float r = m_planets[i].getDynamics().m_position.distance(m_planets[j].getDynamics().m_position);
+			double subtotal = -m_par->G*double(m_planets[i].m_mass)*double(m_planets[j].m_mass)/double(r);
+			total += 2*subtotal;
+		}
+	}
+	return total;
+}
+
+double CSolarSystem::kinetic(){
+	double total=0;
+	for (vector<CPlanet>::iterator it = m_planets.begin();it < m_planets.end(); it++) {
+		total+=(double(.5)*it->m_mass*it->getDynamics().m_velocity.magSquared());
+	}
+	return total;
+}
+
+double CSolarSystem::totalEnergy(){
+	return kinetic()+potential();
+}
+
+void CSolarSystem::adjustMomentum(){
+	double x=0;
+	double y=0;
+	double z=0;
+	double M=0;
+	for (vector<CPlanet>::iterator it = m_planets.begin();it < m_planets.end(); it++) {
+		x+=(it->getDynamics().m_velocity.m_x*it->m_mass);
+		y+=(it->getDynamics().m_velocity.m_y*it->m_mass);
+		z+=(it->getDynamics().m_velocity.m_z*it->m_mass);
+		M+=it->m_mass;
+	}
+	//cout << "momentum: " << x << " " << y << " " << z << "\n";
+
+
+	for (vector<CPlanet>::iterator it = m_planets.begin();it < m_planets.end(); it++) {
+			it->getDynamicsPtr()->m_velocity.m_x-=x/M;
+			it->getDynamicsPtr()->m_velocity.m_y-=y/M;
+			it->getDynamicsPtr()->m_velocity.m_z-=z/M;
+		}
+
+
+/*
+	x = y = z = 0;
+	for (vector<CPlanet>::iterator it = m_planets.begin();it < m_planets.end(); it++) {
+			x+=(it->getDynamics().m_velocity.m_x*it->m_mass);
+			y+=(it->getDynamics().m_velocity.m_y*it->m_mass);
+			z+=(it->getDynamics().m_velocity.m_z*it->m_mass);
+		}
+
+
+		cout << "momentum: " << x << " " << y << " " << z << "\n";
+		*/
+
+	return;
 }

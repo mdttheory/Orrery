@@ -35,7 +35,9 @@ public:
 	CSVector operator-=(const CSVector& rhs);
 	CSVector operator+=(const CSVector& rhs);
 	CSVector operator*(const float rhs);
+	CSVector operator*(const double rhs);
 	CSVector operator/(const float rhs);
+	CSVector operator/(const double rhs);
 	bool operator==(const CSVector& other);
 	bool operator!=(const CSVector& other);
 	float operator*(const CSVector& rhs);

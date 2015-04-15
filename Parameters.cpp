@@ -18,11 +18,11 @@ struct Par{
 
 	//simulation integration parameters
 	float dt = pow(10,4);
-	float maxT = 250000*dt;
+	float maxT = 100*250000*dt;
 	unsigned long int maxTimeSteps = (maxT/dt);
 
 	unsigned short integration_method = 4;
-	unsigned short print_freq = 2500;
+	unsigned short print_freq = 100;
 	//0 = errorflag
 	//1 = Euler
 	//2 = 2nd order Runga-Kutta

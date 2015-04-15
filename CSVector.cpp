@@ -36,7 +36,7 @@ float CSVector::distance(const CSVector other)
 	double dist = pow(double(m_x)-double(other.m_x),2);
 	dist += pow(double(m_y)-double(other.m_y),2);
 	dist += pow(double(m_z)-double(other.m_z),2);
-	return float(sqrt(dist));
+	return sqrt(dist);
 }
 
 CSVector CSVector::operator=(const CSVector& rhs)
@@ -79,7 +79,7 @@ CSVector CSVector::operator+(const CSVector& rhs)
 
 CSVector CSVector::operator-(CSVector& rhs)
 {
-	return (*this + rhs * -1);
+	return (*this + rhs * -1.0);
 }
 
 CSVector CSVector::operator*(const float rhs)
@@ -89,12 +89,27 @@ CSVector CSVector::operator*(const float rhs)
 	float newZ = m_z * rhs;
 	return CSVector(newX,newY,newZ);
 }
+CSVector CSVector::operator*(const double rhs)
+{
+	double newX = double(m_x) * rhs;
+	double newY = double(m_y) * rhs;
+	double newZ = double(m_z) * rhs;
+	return CSVector(newX,newY,newZ);
+}
 
 CSVector CSVector::operator/(const float rhs)
 {
 	float newX = m_x / rhs;
 	float newY = m_y / rhs;
 	float newZ = m_z / rhs;
+	return CSVector(newX,newY,newZ);
+}
+
+CSVector CSVector::operator/(const double rhs)
+{
+	double newX = double(m_x) / rhs;
+	double newY = double(m_y) / rhs;
+	double newZ = double(m_z) / rhs;
 	return CSVector(newX,newY,newZ);
 }
 

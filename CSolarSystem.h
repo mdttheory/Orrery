@@ -21,9 +21,13 @@ public:
 	virtual ~CSolarSystem();
 	vector<CPlanet> m_planets;
 	Par* m_par;
-	vector<double> potential();
-	vector<double> kinetic();
-	vector<double> totalEnergy(vector<double> kinetic, vector<double> potential);
+	vector<double> indPotential();
+	vector<double> indKinetic();
+	vector<double> totalIndEnergy(vector<double> kinetic, vector<double> potential);
+	double potential();
+	double kinetic();
+	double totalEnergy();
+	void adjustMomentum();
 
 	friend ostream &operator<<(ostream &output, const CSolarSystem &D) {
 		for (vector<CPlanet>::const_iterator it = D.m_planets.begin();it < D.m_planets.end(); it++) {
