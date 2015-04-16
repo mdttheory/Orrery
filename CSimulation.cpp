@@ -7,8 +7,9 @@
 
 #include "CSimulation.h"
 
-CSimulation::CSimulation(CSolarSystem solarSystem, Par* par) {
+CSimulation::CSimulation(CSolarSystem solarSystem, Par* par, string name) {
 	m_par = par;
+	m_name = name;
 	m_SS = solarSystem;
 
 }

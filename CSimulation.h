@@ -15,7 +15,7 @@
 
 class CSimulation {
 public:
-	CSimulation(CSolarSystem solarSystem, Par *par);
+	CSimulation(CSolarSystem solarSystem, Par *par, string name);
 	virtual ~CSimulation();
 	void RK(CSVector &pos_i, CSVector &vel_i, string name);
 	void Euler(CSVector &pos_i, CSVector &vel_i, string name);
@@ -24,6 +24,7 @@ public:
 	void print_pos(ostream &pos_stream);
 	void print_en(ostream &en_stream, double init_en);
 	void update();
+	string m_name;
 	Par* m_par;
 	CSolarSystem m_SS;
 };
