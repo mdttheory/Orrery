@@ -34,6 +34,12 @@ int main()
 	param_buf = param_of.rdbuf();
 	ostream param_stream(param_buf);
 
+	streambuf * com_buf;
+	ofstream com_of;
+	com_of.open("data/center_of_mass.txt");
+	com_buf = com_of.rdbuf();
+	ostream com_stream(com_buf);
+
 	Par par;
 	CSolarSystem newSS(&par);
 	cout << newSS << "\n";
@@ -72,9 +78,10 @@ int main()
 		for(unsigned long int t = 0; t<it->m_par->maxTimeSteps; t++){
 				if(int(t)%par.print_freq==0){
 					cout << "Timestep " << t << " of " << it->m_par->maxTimeSteps << "\n";
-					if(it->m_name == RKSim.m_name){
-						it->print_pos(pos_stream);
-					}
+					//TODO print positions again
+//					if(it->m_name == RKSim.m_name){
+//						it->print_pos(pos_stream);
+//					}
 					it->print_en(en_stream, init_en);
 					gettimeofday(&tp,NULL);
 					en_stream << ", " << t << ", " << (tp.tv_sec * 1000 + tp.tv_usec / 1000-ms);
@@ -105,6 +112,7 @@ int main()
 
 	en_of.close();
 	pos_of.close();
+	com_of.close();
 	return 0;
 }
 

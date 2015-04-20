@@ -18,7 +18,7 @@ struct Par{
 
 	//simulation integration parameters
 	float dt = pow(10,4);
-	float maxT = 250000*dt;
+	float maxT = 10*250000*dt;
 	unsigned long int maxTimeSteps = (maxT/dt);
 
 	unsigned short integration_method = 4;
@@ -27,6 +27,25 @@ struct Par{
 	//1 = Euler
 	//2 = 2nd order Runga-Kutta
 	//4 = 4th order Runga-Kutta
+
+	//TODO List:
+	/* Plot total energy trend lines
+	 * Adjust timestep to find critical values
+	 * Plot kinetic energies
+	 * Plot potential energies
+	 * Plot center of mass and check form as a function of time
+	 * Parallelize loop of simulations
+	 * Create satellite class with random initialization
+	 * Write fitness function
+	 * Write loop for parallelization
+	 * Small scale test
+	 * Parameter for max run time (realtime) & how often to check
+	 * Run on HPCC
+	 * Write outer (generational) loop with dummy breeding function
+	 * test
+	 * Improve breeding algorithm
+	 * Increase demands on GA with a more specific fitness function
+	 */
 
 };
 

@@ -27,6 +27,7 @@ public:
 	double potential();
 	double kinetic();
 	double totalEnergy();
+	CSVector calcCOM();
 	void adjustMomentum();
 
 	friend ostream &operator<<(ostream &output, const CSolarSystem &D) {

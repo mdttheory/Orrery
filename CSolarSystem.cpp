@@ -138,6 +138,18 @@ double CSolarSystem::totalEnergy(){
 	return kinetic()+potential();
 }
 
+CSVector CSolarSystem::calcCOM(){
+	CSVector com;
+	double totalMass = 0;
+
+	for (vector<CPlanet>::iterator it = m_planets.begin();it < m_planets.end(); it++) {
+		com+=(it->getDynamics().m_position)*(it->m_mass);
+		totalMass+=it->m_mass;
+	}
+
+	return (com/totalMass);
+}
+
 void CSolarSystem::adjustMomentum(){
 	double x=0;
 	double y=0;

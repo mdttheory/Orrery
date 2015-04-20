@@ -7,8 +7,6 @@ import math
 
 f = open("data/delta_E.txt")
 
-
-
 data=[[[],[],[]]]
 int_method=0
 time_step=0
