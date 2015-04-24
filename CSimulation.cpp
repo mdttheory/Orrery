@@ -114,8 +114,9 @@ void CSimulation::print_en(ostream &en_stream, double init_en) {
 
 void CSimulation::update() {
 	//cout << "Using integration method " << m_par->integration_method << "\n";
-	for (vector<CPlanet>::iterator it = m_SS.m_planets.begin();
-				it < m_SS.m_planets.end(); it++) {
+	CSolarSystem newSS(m_SS);
+	for (vector<CPlanet>::iterator it = newSS.m_planets.begin();
+				it < newSS.m_planets.end(); it++) {
 		if (m_par->integration_method == 4) {
 			RK(it->getDynamicsPtr()->m_position, it->getDynamicsPtr()->m_velocity, it->m_name);
 		}
@@ -127,4 +128,5 @@ void CSimulation::update() {
 			cout << "ERROR, integration method set to " << m_par->integration_method
 					<< "\n";
 	}
+	m_SS = newSS;
 }

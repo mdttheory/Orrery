@@ -1,5 +1,6 @@
 CSimulation.d: ../CSimulation.cpp ../CSimulation.h ../CPlanet.h \
- ../CCoordSet.h ../CSVector.h ../Parameters.cpp ../CSolarSystem.h
+ ../CCoordSet.h ../CSVector.h ../Parameters.cpp ../CSolarSystem.h \
+ ../CSatellite.h
 
 ../CSimulation.h:
 
@@ -12,3 +13,5 @@ CSimulation.d: ../CSimulation.cpp ../CSimulation.h ../CPlanet.h \
 ../Parameters.cpp:
 
 ../CSolarSystem.h:
+
+../CSatellite.h:

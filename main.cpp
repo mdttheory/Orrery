@@ -10,6 +10,9 @@
 #include <fstream>
 #include "CSimulation.h"
 #include <sys/time.h>
+#include "CChromosome.h"
+#include <random>
+#include <chrono>
 
 using namespace std;
 
@@ -41,8 +44,11 @@ int main()
 	ostream com_stream(com_buf);
 
 	Par par;
+	//unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+	//default_random_engine gen(seed);
+	default_random_engine gen; //TODO: Use system clock for seed
+
 	CSolarSystem newSS(&par);
-	cout << newSS << "\n";
 
 	vector<CSimulation> sims;
 
@@ -55,12 +61,19 @@ int main()
 	CSimulation EulerSim(newSS, &par2, "Euler");
 
 	sims.push_back(RKSim);
-	sims.push_back(EulerSim);
+	//sims.push_back(EulerSim);
 
 
-	// Output parameters of each simulation & adjust momentum
+	CChromosome a(&par, gen);
+	CChromosome b(&par, gen);
+	CChromosome c(b*a, gen);
+	cout << "a:\n" << a << "\n";
+	cout << "b:\n" << b << "\n";
+	cout << "c:\n" << c << "\n";
+
 	for (vector<CSimulation>::iterator it = sims.begin();
 				it < sims.end(); it++) {
+
 		param_stream << "-----"<<it->m_name << "-----\n";
 		param_stream << "AU: " << it->m_par->AU << "\n";
 		param_stream << "G: " << it->m_par->G << "\n";
@@ -69,7 +82,6 @@ int main()
 		param_stream << "maxT: " << it->m_par->maxT << "\n";
 		param_stream << "integration_method: " << it->m_par->integration_method << "\n";
 		param_stream << "print_freq: " << it->m_par->print_freq << "\n\n";
-
 		it->m_SS.adjustMomentum(); // Set total momentum to zero
 
 		struct timeval tp;
@@ -78,13 +90,16 @@ int main()
 		for(unsigned long int t = 0; t<it->m_par->maxTimeSteps; t++){
 				if(int(t)%par.print_freq==0){
 					cout << "Timestep " << t << " of " << it->m_par->maxTimeSteps << "\n";
-					//TODO print positions again
-//					if(it->m_name == RKSim.m_name){
-//						it->print_pos(pos_stream);
-//					}
+
+
+					if(it->m_name == RKSim.m_name){
+						it->print_pos(pos_stream);
+						//com_stream << it->m_SS.calcCOM() << "\n";
+					}
 					it->print_en(en_stream, init_en);
 					gettimeofday(&tp,NULL);
 					en_stream << ", " << t << ", " << (tp.tv_sec * 1000 + tp.tv_usec / 1000-ms);
+					en_stream << ", " << it->m_SS.kinetic() << ", " << it->m_SS.potential();
 					en_stream << "\n";
 				}
 

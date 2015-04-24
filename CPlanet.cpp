@@ -48,6 +48,24 @@ CPlanet::~CPlanet() {
 
 }
 
+CPlanet CPlanet::operator=(const CPlanet& rhs)
+{
+	if(this == &rhs)
+	        return *this;
+
+	m_par = rhs.m_par;
+	m_ss = rhs.m_ss;
+	m_mass = rhs.m_mass;
+	m_name = rhs.m_name;
+	m_angle = rhs.m_angle;
+
+	m_aphelion = rhs.m_aphelion; // furthest from sun
+	m_perihelion = rhs.m_perihelion;
+	m_dynamics = rhs.m_dynamics;
+
+	return *this;
+}
+
 CSVector CPlanet::calcForce(CSolarSystem* ss){
 	CSVector zero;
 	return zero;

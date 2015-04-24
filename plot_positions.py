@@ -32,7 +32,7 @@ for i in range(0,len(sizes)):
 	sizes[i]=sizes[i]**.3
 
 for i in range(0,n):
-	if i%10 == 0:
+	if i%1 == 0:
 		fig = plt.figure()
 		ax = fig.add_subplot(111, projection='3d')
 		for j in range(0,len(data[i])):

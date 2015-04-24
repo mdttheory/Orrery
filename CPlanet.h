@@ -24,6 +24,8 @@ public:
 			Par* par, CSolarSystem* ss);
 	virtual ~CPlanet();
 
+	CPlanet operator=(const CPlanet& rhs);
+
 	Par* m_par;
 	CSolarSystem* m_ss;
 	float m_mass;

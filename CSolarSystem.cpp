@@ -12,6 +12,28 @@ CSolarSystem::CSolarSystem() {
 	m_par = NULL;
 }
 
+
+CSolarSystem::CSolarSystem(const CSolarSystem& rhs) {
+
+	m_par = rhs.m_par;
+	m_planets = rhs.m_planets;
+
+}
+
+
+void CSolarSystem::addSat(CSatellite sat){
+	m_sats.push_back(sat);
+}
+
+CSolarSystem CSolarSystem::operator=(const CSolarSystem& rhs)
+{
+	if(this == &rhs)
+	        return *this;
+	m_par = rhs.m_par;
+	m_planets = rhs.m_planets;
+	return *this;
+}
+
 CSolarSystem::CSolarSystem(Par* par) {
 
 
@@ -120,7 +142,7 @@ double CSolarSystem::potential(){
 		for(short j = i + 1; j < n; j++){
 			float r = m_planets[i].getDynamics().m_position.distance(m_planets[j].getDynamics().m_position);
 			double subtotal = -m_par->G*double(m_planets[i].m_mass)*double(m_planets[j].m_mass)/double(r);
-			total += 2*subtotal;
+			total += subtotal;
 		}
 	}
 	return total;
@@ -140,14 +162,32 @@ double CSolarSystem::totalEnergy(){
 
 CSVector CSolarSystem::calcCOM(){
 	CSVector com;
+	double x = 0;
+	double y = 0;
+	double z = 0;
 	double totalMass = 0;
 
 	for (vector<CPlanet>::iterator it = m_planets.begin();it < m_planets.end(); it++) {
-		com+=(it->getDynamics().m_position)*(it->m_mass);
+		x+=double((it->getDynamics().m_position.m_x))*(it->m_mass);
+		y+=double((it->getDynamics().m_position.m_y))*(it->m_mass);
+		z+=double((it->getDynamics().m_position.m_z))*(it->m_mass);
 		totalMass+=it->m_mass;
 	}
+//	cout << "Total Mass: " << totalMass << "\n";
+//	cout << "pre div x: " << x << "\n";
+//	cout << "pre div y: " << y << "\n";
+//	cout << "pre div z: " << z << "\n";
+	x /= totalMass;
+	y /= totalMass;
+	z /= totalMass;
+//	cout << "x: " << x << "\n";
+//	cout << "y: " << y << "\n";
+//	cout << "z: " << z << "\n";
+	com.m_x = x;
+	com.m_y = y;
+	com.m_z = z;
 
-	return (com/totalMass);
+	return (com);
 }
 
 void CSolarSystem::adjustMomentum(){

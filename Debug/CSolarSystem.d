@@ -1,5 +1,5 @@
 CSolarSystem.d: ../CSolarSystem.cpp ../CSolarSystem.h ../CPlanet.h \
- ../CCoordSet.h ../CSVector.h ../Parameters.cpp
+ ../CCoordSet.h ../CSVector.h ../Parameters.cpp ../CSatellite.h
 
 ../CSolarSystem.h:
 
@@ -10,3 +10,5 @@ CSolarSystem.d: ../CSolarSystem.cpp ../CSolarSystem.h ../CPlanet.h \
 ../CSVector.h:
 
 ../Parameters.cpp:
+
+../CSatellite.h:

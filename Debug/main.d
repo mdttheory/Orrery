@@ -1,5 +1,6 @@
 main.d: ../main.cpp ../CSolarSystem.h ../CPlanet.h ../CCoordSet.h \
- ../CSVector.h ../Parameters.cpp ../CSimulation.h
+ ../CSVector.h ../Parameters.cpp ../CSatellite.h ../CSimulation.h \
+ ../CChromosome.h
 
 ../CSolarSystem.h:
 
@@ -11,4 +12,8 @@ main.d: ../main.cpp ../CSolarSystem.h ../CPlanet.h ../CCoordSet.h \
 
 ../Parameters.cpp:
 
+../CSatellite.h:
+
 ../CSimulation.h:
+
+../CChromosome.h:

@@ -7,12 +7,12 @@ import math
 
 f = open("data/delta_E.txt")
 
-data=[[[],[],[]]]
+data=[[[],[],[],[],[]]]
 int_method=0
 time_step=0
 for line in f:
 	if line == "-\n":
-		data.append([[],[],[]])
+		data.append([[],[],[],[],[]])
 		int_method+=1
 	else:
 		data_type=0
@@ -47,4 +47,25 @@ plt.legend(loc='lower left')
 plt.savefig('images/Plots/TimestepsVSRealtime.png', bbox_inches='tight')
 plt.close()
 
+index = 0
+for int_method in data:
+	plt.plot(int_method[1],int_method[3],color=colors[index],label=labels[index])
+	plt.xlabel('10,000s or timesteps')
+	plt.ylabel('Kinetic Energy')
+	index+=1
+plt.legend(loc='lower left')
+plt.savefig('images/Plots/KineticVSTimesteps.png', bbox_inches='tight')
+plt.close()
 
+index = 0
+for int_method in data:
+	plt.plot(int_method[1],int_method[4],color=colors[index],label=labels[index])
+	plt.xlabel('10,000s or timesteps')
+	plt.ylabel('Potential Energy')
+	index+=1
+plt.legend(loc='lower left')
+plt.savefig('images/Plots/PotentialVSTimesteps.png', bbox_inches='tight')
+plt.close()
+
+#print(data[0][1])
+#print(data[0][4])

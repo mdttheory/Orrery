@@ -11,6 +11,7 @@
 #include "CPlanet.h"
 #include "Parameters.cpp"
 #include <vector>
+#include "CSatellite.h"
 
 using namespace std;
 
@@ -20,6 +21,8 @@ public:
 	CSolarSystem(Par* par);
 	virtual ~CSolarSystem();
 	vector<CPlanet> m_planets;
+	vector<CSatellite> m_sats;
+	void addSat(CSatellite sat);
 	Par* m_par;
 	vector<double> indPotential();
 	vector<double> indKinetic();
@@ -29,6 +32,8 @@ public:
 	double totalEnergy();
 	CSVector calcCOM();
 	void adjustMomentum();
+	CSolarSystem operator=(const CSolarSystem& rhs);
+	CSolarSystem(const CSolarSystem& rhs);
 
 	friend ostream &operator<<(ostream &output, const CSolarSystem &D) {
 		for (vector<CPlanet>::const_iterator it = D.m_planets.begin();it < D.m_planets.end(); it++) {
