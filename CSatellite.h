@@ -9,12 +9,18 @@
 #define CSATELLITE_H_
 
 #include "CPlanet.h"
+#include "CChromosome.h"
+#include <vector>
+#include <algorithm>
+using namespace std;
 
 class CSatellite : CPlanet{
 public:
-	CSatellite();
+	CSatellite(Par* par);
 	virtual ~CSatellite();
-	float fuel;
+	float m_fuel;
+	int m_thrustQuant;
+	vector<CChromosome> m_thrusts;
 
 };
 

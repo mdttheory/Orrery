@@ -34,19 +34,14 @@ struct Par{
 	//4 = 4th order Runga-Kutta
 
 	float maxThrusterVel = pow(10.0,30);
-
 	float mutateChance = .01;
+
+	float startFuel = 1;
 
 	//TODO List:
 	/*
-	 * Create trait class (dvx, dvy, dvz, t)
-	 * Overload comparison operators and [] operator
-	 * 		for trait in sat
-	 * 			for int i=0; i<4; i++
-	 * 				if rand()
-	 * 					trait[i] = father.trait[i]
+	 * Implement satellite thrust
 	 * Parallelize loop of simulations
-	 * Create satellite class with random initialization
 	 * Write fitness function
 	 * Write loop for parallelization
 	 * Small scale test

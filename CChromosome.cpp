@@ -7,30 +7,31 @@
 
 #include "CChromosome.h"
 
-CChromosome::CChromosome(Par* par, default_random_engine &gen) {
+CChromosome::CChromosome(Par* par) {
+	unsigned seed = chrono::high_resolution_clock::now().time_since_epoch().count();
+	default_random_engine gen(seed);
 	uniform_real_distribution<float> distThrust(-1.0*(par->maxThrusterVel),par->maxThrusterVel);
 	uniform_int_distribution<int> distTime(0,par->maxTimeSteps);
-	m_gen = gen;
+
 	m_par = par;
 
 	m_dvx[1] = -1.0*(par->maxThrusterVel);
 	m_dvx[2] = (par->maxThrusterVel);
-	m_dvx[0] = distThrust(m_gen);
+	m_dvx[0] = distThrust(gen);
 
 	m_dvy[1] = -1.0*(par->maxThrusterVel);
 	m_dvy[2] = (par->maxThrusterVel);
-	m_dvy[0] = distThrust(m_gen);
+	m_dvy[0] = distThrust(gen);
 
 	m_dvz[1] = -1.0*(par->maxThrusterVel);
 	m_dvz[2] = (par->maxThrusterVel);
-	m_dvz[0] = distThrust(m_gen);
+	m_dvz[0] = distThrust(gen);
 
 	m_t[1] = 0;
 	m_t[2] = float((par->maxTimeSteps));
-	m_t[0] = float(distTime(m_gen));
+	m_t[0] = float(distTime(gen));
 }
-CChromosome::CChromosome(const CChromosome &rhs, default_random_engine &gen) {
-	m_gen = gen;
+CChromosome::CChromosome(const CChromosome &rhs) {
 	m_par = rhs.m_par;
 
 	m_dvx[1] = rhs.m_dvx[1];
@@ -57,20 +58,27 @@ CChromosome::~CChromosome() {
 
 CChromosome CChromosome::operator*(CChromosome& rhs)
 {
-	uniform_real_distribution<float> distZOne(0.0,1.0);
+	CChromosome newChrom(rhs);
 
-	CChromosome newChrom(rhs, m_gen);
-	float r = distZOne(m_gen);
 	for(unsigned short i = 0;i<newChrom.chromSize();i++){
-		// TODO: Figure out how to NOT re-create the distribution each time
+
+		unsigned seed = chrono::high_resolution_clock::now().time_since_epoch().count();
+		default_random_engine gen(seed);
 		uniform_real_distribution<float> dist(newChrom[i][1],newChrom[i][2]);
+		uniform_real_distribution<float> randOne(0,1);
+		float r = randOne(gen);
+		cout << "R: " << r << "\n";
 		if (r < m_par->mutateChance){
-			newChrom[i][0] = dist(m_gen);
+			newChrom[i][0] = dist(gen);
 		}
 		else if (r < (m_par->mutateChance+1.0)/2.0){
 			newChrom[i][0] = (*this)[i][0];
+			cout << "Using lhs\n";
 		}
-		else newChrom[i][0] = rhs[i][0];
+		else {
+			newChrom[i][0] = rhs[i][0];
+			cout << "Using rhs\n";
+		}
 	}
 	return newChrom;
 }

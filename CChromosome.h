@@ -10,14 +10,14 @@
 
 #include "Parameters.cpp"
 #include <random>
+#include <chrono>
 
 class CChromosome {
 public:
-	CChromosome(Par* par, default_random_engine &gen);
-	CChromosome(const CChromosome &rhs, default_random_engine &gen);
+	CChromosome(Par* par);
+	CChromosome(const CChromosome &rhs);
 	virtual ~CChromosome();
 	Par* m_par;
-	default_random_engine m_gen;
 
 	float m_dvx[3];
 	float m_dvy[3];

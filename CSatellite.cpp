@@ -6,10 +6,15 @@
  */
 
 #include "CSatellite.h"
+using namespace std;
 
-CSatellite::CSatellite() {
-	// TODO Auto-generated constructor stub
-
+CSatellite::CSatellite(Par* par) {
+	m_fuel = par->startFuel;
+	for(int i = 0; i < m_thrustQuant; i++){
+		CChromosome a(&par);
+		m_thrusts.push_back(a);
+	}
+	sort(m_thrusts.begin(), m_thrusts.end());
 }
 
 CSatellite::~CSatellite() {

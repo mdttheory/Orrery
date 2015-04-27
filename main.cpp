@@ -44,9 +44,6 @@ int main()
 	ostream com_stream(com_buf);
 
 	Par par;
-	//unsigned seed = chrono::system_clock::now().time_since_epoch().count();
-	//default_random_engine gen(seed);
-	default_random_engine gen; //TODO: Use system clock for seed
 
 	CSolarSystem newSS(&par);
 
@@ -62,14 +59,6 @@ int main()
 
 	sims.push_back(RKSim);
 	//sims.push_back(EulerSim);
-
-
-	CChromosome a(&par, gen);
-	CChromosome b(&par, gen);
-	CChromosome c(b*a, gen);
-	cout << "a:\n" << a << "\n";
-	cout << "b:\n" << b << "\n";
-	cout << "c:\n" << c << "\n";
 
 	for (vector<CSimulation>::iterator it = sims.begin();
 				it < sims.end(); it++) {
