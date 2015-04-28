@@ -22,7 +22,6 @@ public:
 	virtual ~CSolarSystem();
 	vector<CPlanet> m_planets;
 	vector<CSatellite> m_sats;
-	void addSat(CSatellite sat);
 	Par* m_par;
 	vector<double> indPotential();
 	vector<double> indKinetic();

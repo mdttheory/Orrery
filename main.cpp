@@ -13,6 +13,8 @@
 #include "CChromosome.h"
 #include <random>
 #include <chrono>
+#include "CSatellite.h"
+#include <string>
 
 using namespace std;
 
@@ -44,9 +46,7 @@ int main()
 	ostream com_stream(com_buf);
 
 	Par par;
-
 	CSolarSystem newSS(&par);
-
 	vector<CSimulation> sims;
 
 	CSimulation RKSim(newSS, &par, "RK4");
@@ -57,8 +57,19 @@ int main()
 	par2.integration_method=1;
 	CSimulation EulerSim(newSS, &par2, "Euler");
 
+	vector<bool> flag;
+	for (unsigned int i = 0; i<par.satsPerCore;i++){
+		CSatellite a(&par, &newSS, string(string("Sat")+to_string(i)), flag);
+		RKSim.m_SS.m_sats.push_back(a);
+		a.printThrust(cout);
+	}
+
+
 	sims.push_back(RKSim);
 	//sims.push_back(EulerSim);
+
+
+
 
 	for (vector<CSimulation>::iterator it = sims.begin();
 				it < sims.end(); it++) {
@@ -71,7 +82,6 @@ int main()
 		param_stream << "maxT: " << it->m_par->maxT << "\n";
 		param_stream << "integration_method: " << it->m_par->integration_method << "\n";
 		param_stream << "print_freq: " << it->m_par->print_freq << "\n\n";
-		it->m_SS.adjustMomentum(); // Set total momentum to zero
 
 		struct timeval tp;
 		gettimeofday(&tp,NULL);

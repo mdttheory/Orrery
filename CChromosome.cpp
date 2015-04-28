@@ -8,6 +8,14 @@
 #include "CChromosome.h"
 
 CChromosome::CChromosome(Par* par) {
+	for(unsigned short i = 0; i<3;i++){
+		m_dvx.push_back(0);
+		m_dvy.push_back(0);
+		m_dvz.push_back(0);
+		m_t.push_back(0);
+	}
+
+
 	unsigned seed = chrono::high_resolution_clock::now().time_since_epoch().count();
 	default_random_engine gen(seed);
 	uniform_real_distribution<float> distThrust(-1.0*(par->maxThrusterVel),par->maxThrusterVel);
@@ -34,6 +42,13 @@ CChromosome::CChromosome(Par* par) {
 CChromosome::CChromosome(const CChromosome &rhs) {
 	m_par = rhs.m_par;
 
+	for(unsigned short i = 0; i<3;i++){
+			m_dvx.push_back(0);
+			m_dvy.push_back(0);
+			m_dvz.push_back(0);
+			m_t.push_back(0);
+		}
+
 	m_dvx[1] = rhs.m_dvx[1];
 	m_dvx[2] = rhs.m_dvx[2];
 	m_dvx[0] = rhs.m_dvx[0];
@@ -54,6 +69,35 @@ CChromosome::CChromosome(const CChromosome &rhs) {
 
 CChromosome::~CChromosome() {
 	// TODO Auto-generated destructor stub
+}
+
+
+CChromosome CChromosome::operator=(const CChromosome& rhs){
+	m_par = rhs.m_par;
+
+	m_dvx[1] = rhs.m_dvx[1];
+	m_dvx[2] = rhs.m_dvx[2];
+	m_dvx[0] = rhs.m_dvx[0];
+
+	m_dvy[1] = rhs.m_dvy[1];
+	m_dvy[2] = rhs.m_dvy[2];
+	m_dvy[0] = rhs.m_dvy[0];
+
+	m_dvz[1] = rhs.m_dvz[1];
+	m_dvz[2] = rhs.m_dvz[2];
+	m_dvz[0] = rhs.m_dvz[0];
+
+	m_t[1] = rhs.m_t[1];
+	m_t[2] = rhs.m_t[2];
+	m_t[0] = rhs.m_t[0];
+
+	return rhs;
+}
+
+void CChromosome::printChrom(ostream &output){
+	output << m_dvx[0] << " " << m_dvy[0] << " " << m_dvz[0] << " " << m_t[0] << "\n";
+
+
 }
 
 CChromosome CChromosome::operator*(CChromosome& rhs)
@@ -83,7 +127,7 @@ CChromosome CChromosome::operator*(CChromosome& rhs)
 	return newChrom;
 }
 
-float* CChromosome::operator[](const int nIndex)
+vector<float> CChromosome::operator[](int nIndex)
 {
 	if (nIndex==0)return m_dvx;
 	else if (nIndex==1)return m_dvy;
@@ -91,11 +135,12 @@ float* CChromosome::operator[](const int nIndex)
 	else if (nIndex==3)return m_t;
 	else{
 		cout << "ERROR CChromosome::operator[] has invalid index " << nIndex << "\n";
-		float* x = NULL;
+		vector<float> x;
 		return x;
 	}
 
 }
+
 
 bool CChromosome::operator==(const CChromosome& rhs)
 {

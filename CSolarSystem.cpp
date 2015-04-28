@@ -17,12 +17,8 @@ CSolarSystem::CSolarSystem(const CSolarSystem& rhs) {
 
 	m_par = rhs.m_par;
 	m_planets = rhs.m_planets;
+	m_sats = rhs.m_sats;
 
-}
-
-
-void CSolarSystem::addSat(CSatellite sat){
-	m_sats.push_back(sat);
 }
 
 CSolarSystem CSolarSystem::operator=(const CSolarSystem& rhs)
@@ -31,6 +27,7 @@ CSolarSystem CSolarSystem::operator=(const CSolarSystem& rhs)
 	        return *this;
 	m_par = rhs.m_par;
 	m_planets = rhs.m_planets;
+	m_sats = rhs.m_sats;
 	return *this;
 }
 
@@ -72,22 +69,18 @@ CSolarSystem::CSolarSystem(Par* par) {
 	CPlanet Jupiter(0.00558505361,sm*9.5458*pow(10,-4),740573600000,816520800000, ccs_Jupiter, string("Jupiter"),m_par,this);
 	m_planets.push_back(Jupiter);
 	}{
-	//TODO Saturn pos/vel
 	CCoordSet ccs_Saturn(zero,zero,zero);;
 	CPlanet Saturn(0.016231562,sm*2.85812*pow(10,-4),1353572956000,1513325783000, ccs_Saturn, string("Saturn"),m_par,this);
 	m_planets.push_back(Saturn);
 	}{
-	//TODO Uranus pos/vel
 	CCoordSet ccs_Uranus(zero,zero,zero);;
 	CPlanet Uranus(0.0178023584,sm*4.36576*pow(10,-5),2735118100000,3006224700000, ccs_Uranus, string("Uranus"),m_par,this);
 	m_planets.push_back(Uranus);
 	}{
-	//TODO Neptune pos/vel
 	CCoordSet ccs_Neptune(zero,zero,zero);;
 	CPlanet Neptune(0.0125663706,sm*5.15028*pow(10,-5),4459504400000,4537580900000, ccs_Neptune, string("Neptune"),m_par,this);
 	m_planets.push_back(Neptune);
 	}{
-	//TODO Pluto pos/vel
 	CCoordSet ccs_Pluto(zero,zero,zero);;
 	CPlanet Pluto(0.296705973,sm*6.583*pow(10,-9),4437000000000,7311000000000, ccs_Pluto, string("Pluto"),m_par,this);
 	m_planets.push_back(Pluto);
@@ -98,6 +91,8 @@ CSolarSystem::CSolarSystem(Par* par) {
 		it->getDynamicsPtr()->m_position.m_z=it->m_aphelion*sin(it->m_angle);
 		it->getDynamicsPtr()->m_velocity.m_y=it->calcTheorVel();
 	}
+	adjustMomentum(); // Set total momentum to zero
+
 }
 
 CSolarSystem::~CSolarSystem() {

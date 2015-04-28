@@ -19,13 +19,14 @@ public:
 	virtual ~CChromosome();
 	Par* m_par;
 
-	float m_dvx[3];
-	float m_dvy[3];
-	float m_dvz[3];
-	float m_t[3];
+	vector<float> m_dvx;
+	vector<float> m_dvy;
+	vector<float> m_dvz;
+	vector<float> m_t;
 	int chromSize() const {
 		return 4;
 	}
+	void printChrom(ostream &output);
 
 	bool operator==(const CChromosome& rhs);
 	bool operator!=(const CChromosome& rhs);
@@ -34,16 +35,20 @@ public:
 	bool operator>(const CChromosome& rhs);
 	bool operator>=(const CChromosome& rhs);
 	bool operator<=(const CChromosome& rhs);
-	float* operator[](const int nIndex);
-	friend ostream &operator<<(ostream &output, CChromosome &chrom) {
-		const int size = chrom.chromSize();
+	CChromosome operator=(const CChromosome& rhs);
+	vector<float> operator[](int nIndex);
 
-		for (unsigned short i = 0; i < size; i++) {
-			output << chrom[i][0] << "\n";
-		}
-		output << "\n";
-		return output;
-	}
+
+//	friend ostream &operator<<(ostream &output, CChromosome &chrom) {
+//		const int size = chrom.chromSize();
+//		cout << "ERROR: "
+//		for (unsigned short i = 0; i < size; i++) {
+//			//cout << chrom[i][0] << "\n";
+//			//output << chrom[i][0] << "\n";
+//		}
+//		output << "\n";
+//		return output;
+//	}
 };
 
 #endif /* CTRAIT_H_ */

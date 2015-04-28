@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <cmath>
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -25,7 +26,6 @@ struct Par{
 	float dt = 1*pow(10,4);
 	float maxT = 0*2*50000*dt;
 	unsigned long int maxTimeSteps = (maxT/dt);
-
 	unsigned short integration_method = 4;
 	unsigned short print_freq = 100;
 	//0 = errorflag
@@ -33,10 +33,16 @@ struct Par{
 	//2 = 2nd order Runga-Kutta
 	//4 = 4th order Runga-Kutta
 
-	float maxThrusterVel = pow(10.0,30);
+	//GA Params
 	float mutateChance = .01;
+	unsigned int satsPerCore = 5;
 
+	// Satellite params
+	float maxThrusterVel = pow(10.0,30);
 	float startFuel = 1;
+	unsigned int thrustQuant = 5;
+	float satMass = 722;
+	string homePlanetName = "Earth";
 
 	//TODO List:
 	/*
@@ -54,23 +60,5 @@ struct Par{
 	 */
 
 };
-/*
-template<typename T>
-T randBetween (T min, T max){
-	T n = max - min;
-	float scale = 1.0;
-	if(n>=RAND_MAX){
-		scale = n/float(RAND_MAX);
-		n=RAND_MAX-1;
-	}
-	T remainder = fmod(RAND_MAX, n);
-	cout << "remainder: " << remainder << "\n";
-	cout << "mod: " << (2147483647%2147483646) << "\n";
-	T x;
-    do{
-        x = rand();
-    }while (x >= RAND_MAX - remainder);
-    return min + scale*(fmod(x, n));
-}*/
 
 #endif /* CPARAMETERS_H_ */

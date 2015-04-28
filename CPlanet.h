@@ -22,9 +22,11 @@ public:
 	CPlanet(const CPlanet& rhs);
 	CPlanet(float angle, float mass, float peri, float ap, CCoordSet ccs, string name,
 			Par* par, CSolarSystem* ss);
+	CPlanet(vector<bool> flagforsatelliteuse);
 	virtual ~CPlanet();
 
 	CPlanet operator=(const CPlanet& rhs);
+	bool operator==(const CPlanet& rhs);
 
 	Par* m_par;
 	CSolarSystem* m_ss;
@@ -52,7 +54,7 @@ public:
 		output << D.m_name << ": " << D.m_mass << "kg\n" << D.m_dynamics << "\n";
 		return output;
 	}
-private:
+protected:
 	CCoordSet m_dynamics;
 
 };

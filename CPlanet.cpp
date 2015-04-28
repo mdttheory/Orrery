@@ -22,6 +22,19 @@ CPlanet::CPlanet() {
 	return;
 }
 
+CPlanet::CPlanet(vector<bool> flagforsatelliteuse) {
+	//SURPRISE!
+	m_par = NULL;
+	m_ss = NULL;
+	m_mass = -1;
+	m_perihelion = -1;
+	m_aphelion = -1;
+	m_dynamics = CCoordSet();
+	m_name = "uninitialized";
+	m_angle = -1;
+	return;
+}
+
 CPlanet::CPlanet(const CPlanet& rhs) {
 	m_par = rhs.m_par;
 	m_ss = rhs.m_ss;
@@ -32,6 +45,7 @@ CPlanet::CPlanet(const CPlanet& rhs) {
 	m_aphelion = rhs.m_aphelion;
 	m_angle = rhs.m_angle;
 }
+
 
 CPlanet::CPlanet(float angle, float mass, float peri, float ap, CCoordSet ccs, string name, Par* par, CSolarSystem* ss) {
 	m_ss = ss;
@@ -64,6 +78,11 @@ CPlanet CPlanet::operator=(const CPlanet& rhs)
 	m_dynamics = rhs.m_dynamics;
 
 	return *this;
+}
+
+bool CPlanet::operator==(const CPlanet& rhs)
+{
+	return (m_name==rhs.m_name);
 }
 
 CSVector CPlanet::calcForce(CSolarSystem* ss){
