@@ -5,5 +5,5 @@ SolarMass: 1.98855e+30
 dt: 10000
 maxT: 1e+09
 integration_method: 4
-print_freq: 100
+print_freq: 5
 

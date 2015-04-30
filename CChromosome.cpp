@@ -23,10 +23,10 @@ CChromosome::CChromosome(Par* par, unsigned short coreNum) {
 	uniform_int_distribution<int> distTime(0,par->maxTimeSteps);
 
 	m_par = par;
-
+	float x;
 	m_dvx[1] = -1.0*(par->maxThrusterVel);
 	m_dvx[2] = (par->maxThrusterVel);
-	m_dvx[0] = distThrust(gen);
+	m_dvx[0] = x = distThrust(gen);
 
 	m_dvy[1] = -1.0*(par->maxThrusterVel);
 	m_dvy[2] = (par->maxThrusterVel);

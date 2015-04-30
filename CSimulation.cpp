@@ -32,7 +32,8 @@ CSimulation::CSimulation(CSolarSystem solarSystem, Par* par, string name, unsign
 
 		a.setDynamics(tempSet);
 
-		a.m_thrusts[0].m_t[0]=0;
+		a.m_thrusts[a.m_thrusts.size()-1].m_t[0]=0;
+
 		m_SS.m_sats.push_back(a);
 		}
 }
@@ -164,7 +165,7 @@ void CSimulation::update(unsigned long currStep) {
 
 	for (vector<CSatellite>::iterator it = newSS.m_sats.begin();
 				it < newSS.m_sats.end(); it++) {
-		if(it->m_thrusts[it->m_thrusts.size()-1].m_t[0] == currStep){
+		if(it->m_thrusts.size()>0 && it->m_thrusts[it->m_thrusts.size()-1].m_t[0]-currStep < .5){
 			it->getDynamicsPtr()->m_velocity.m_x+=it->m_thrusts[it->m_thrusts.size()-1].m_dvx[0];
 			it->getDynamicsPtr()->m_velocity.m_y+=it->m_thrusts[it->m_thrusts.size()-1].m_dvy[0];
 			it->getDynamicsPtr()->m_velocity.m_z+=it->m_thrusts[it->m_thrusts.size()-1].m_dvz[0];

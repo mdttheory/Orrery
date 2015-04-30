@@ -27,7 +27,7 @@ struct Par{
 	float maxT = 2*50000*dt;
 	unsigned long int maxTimeSteps = (maxT/dt);
 	unsigned short integration_method = 4;
-	unsigned short print_freq = 100;
+	unsigned short print_freq = 5;
 	//0 = errorflag
 	//1 = Euler
 	//2 = 2nd order Runga-Kutta
@@ -38,7 +38,7 @@ struct Par{
 	unsigned int satsPerCore = 5;
 
 	// Satellite params
-	float maxThrusterVel = 10000000;
+	float maxThrusterVel = 30000;
 	float startFuel = 1;
 	unsigned int thrustQuant = 5;
 	float satMass = 722;
@@ -46,7 +46,6 @@ struct Par{
 
 	//TODO List:
 	/*
-	 * Implement satellite thrust
 	 * Parallelize loop of simulations
 	 * Write fitness function
 	 * Write loop for parallelization
