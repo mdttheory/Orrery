@@ -10,6 +10,7 @@ numSats = 5
 
 n = 0
 data = [[]]
+
 n2 = 0
 for line in f:
 	if line != '-\n':
@@ -50,7 +51,7 @@ for i in range(0,n):
 		# plt.ylim([-8,8])
 		# ax.set_zlim([-8,8])
 		# plt.title('Position at timestep '+str(i))
-		# plt.savefig('images/PositionData'+str(i)+'.png', bbox_inches='tight')
+		# plt.savefig('images/3D/PositionData'+str(i)+'.png', bbox_inches='tight')
 		# plt.close()
 
 		fig = plt.figure()

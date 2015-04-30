@@ -61,8 +61,7 @@ int main()
 	sims.push_back(RKSim);
 	//sims.push_back(EulerSim);
 
-
-
+	RKSim.genePrint("Sim1");
 
 	for (vector<CSimulation>::iterator it = sims.begin();
 				it < sims.end(); it++) {

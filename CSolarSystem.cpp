@@ -41,48 +41,48 @@ CSolarSystem::CSolarSystem(Par* par) {
 	{
 	//Sun
 	CCoordSet ccs_Sun(zero,zero,zero);
-	CPlanet Sun(0,sm,0,0, ccs_Sun, string("Sun"),m_par,this);
+	CPlanet Sun(0,sm,0,0,696342000, ccs_Sun, string("Sun"),m_par,this);
 	m_planets.push_back(Sun);
 	}{
 	//Mercury
 	CCoordSet ccs_Mercury(zero,zero,zero);
-	CPlanet Mercury(0.110653875,sm*1.66012*pow(10,-7),46001200000,69816900000, ccs_Mercury, string("Mercury"),m_par,this);
+	CPlanet Mercury(0.110653875,sm*1.66012*pow(10,-7),46001200000,69816900000,4879000/2.0, ccs_Mercury, string("Mercury"),m_par,this);
 	m_planets.push_back(Mercury);
 	}{
 	//Venus
 	CCoordSet ccs_Venus(zero,zero,zero);;
-	CPlanet Venus(0.0382227106,sm*2.44781*pow(10,-6),107477000000,108939000000, ccs_Venus, string("Venus"),m_par,this);
+	CPlanet Venus(0.0382227106,sm*2.44781*pow(10,-6),107477000000,108939000000,12104000/2.0, ccs_Venus, string("Venus"),m_par,this);
 	m_planets.push_back(Venus);
 	}{
 	//Earth
 	CCoordSet ccs_Earth(zero,zero,zero);;
-	CPlanet Earth(0.0274016693,sm*3.003467*pow(10,-6),147095000000,151930000000, ccs_Earth, string("Earth"),m_par,this);
+	CPlanet Earth(0.0274016693,sm*3.003467*pow(10,-6),147095000000,151930000000, 12742000/2.0, ccs_Earth, string("Earth"),m_par,this);
 	m_planets.push_back(Earth);
 	}{
 	//Mars
 	CCoordSet ccs_Mars(zero,zero,zero);;
-	CPlanet Mars(0.0291469985,sm*3.22713*pow(10,-7),206700000000,249200000000, ccs_Mars, string("Mars"),m_par,this);
+	CPlanet Mars(0.0291469985,sm*3.22713*pow(10,-7),206700000000,249200000000,6779000/2.0, ccs_Mars, string("Mars"),m_par,this);
 	m_planets.push_back(Mars);
 	}{
 	//Jupiter
 	CCoordSet ccs_Jupiter(zero,zero,zero);;
-	CPlanet Jupiter(0.00558505361,sm*9.5458*pow(10,-4),740573600000,816520800000, ccs_Jupiter, string("Jupiter"),m_par,this);
+	CPlanet Jupiter(0.00558505361,sm*9.5458*pow(10,-4),740573600000,816520800000, 69911000, ccs_Jupiter, string("Jupiter"),m_par,this);
 	m_planets.push_back(Jupiter);
 	}{
 	CCoordSet ccs_Saturn(zero,zero,zero);;
-	CPlanet Saturn(0.016231562,sm*2.85812*pow(10,-4),1353572956000,1513325783000, ccs_Saturn, string("Saturn"),m_par,this);
+	CPlanet Saturn(0.016231562,sm*2.85812*pow(10,-4),1353572956000,1513325783000,116464000/2.0, ccs_Saturn, string("Saturn"),m_par,this);
 	m_planets.push_back(Saturn);
 	}{
 	CCoordSet ccs_Uranus(zero,zero,zero);;
-	CPlanet Uranus(0.0178023584,sm*4.36576*pow(10,-5),2735118100000,3006224700000, ccs_Uranus, string("Uranus"),m_par,this);
+	CPlanet Uranus(0.0178023584,sm*4.36576*pow(10,-5),2735118100000,3006224700000,50724000/2.0, ccs_Uranus, string("Uranus"),m_par,this);
 	m_planets.push_back(Uranus);
 	}{
 	CCoordSet ccs_Neptune(zero,zero,zero);;
-	CPlanet Neptune(0.0125663706,sm*5.15028*pow(10,-5),4459504400000,4537580900000, ccs_Neptune, string("Neptune"),m_par,this);
+	CPlanet Neptune(0.0125663706,sm*5.15028*pow(10,-5),4459504400000,4537580900000,49244000/2.0, ccs_Neptune, string("Neptune"),m_par,this);
 	m_planets.push_back(Neptune);
 	}{
 	CCoordSet ccs_Pluto(zero,zero,zero);;
-	CPlanet Pluto(0.296705973,sm*6.583*pow(10,-9),4437000000000,7311000000000, ccs_Pluto, string("Pluto"),m_par,this);
+	CPlanet Pluto(0.296705973,sm*6.583*pow(10,-9),4437000000000,7311000000000, 2390000/2.0, ccs_Pluto, string("Pluto"),m_par,this);
 	m_planets.push_back(Pluto);
 	}
 	//cout << "m_aphelion*tan(0.296705973) = " << Pluto.m_aphelion*tan(0.296705973) << "\n";
@@ -227,4 +227,12 @@ CCoordSet CSolarSystem::getPlanetDynamics(string name){
 		i++;
 	}
 	return m_planets[i].getDynamics();
+}
+
+float CSolarSystem::getPlanetRadius(string name){
+	unsigned short i = 0;
+	while(m_planets[i].m_name != name){
+		i++;
+	}
+	return m_planets[i].m_radius;
 }

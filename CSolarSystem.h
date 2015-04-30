@@ -33,6 +33,7 @@ public:
 	void adjustMomentum();
 	void setSatellites(vector<CSatellite> sats){m_sats = sats;};
 	CCoordSet dynamicsFromName(string name);
+	float getPlanetRadius(string name);
 	CCoordSet getPlanetDynamics(string name);
 	CSolarSystem operator=(const CSolarSystem& rhs);
 	CSolarSystem(const CSolarSystem& rhs);

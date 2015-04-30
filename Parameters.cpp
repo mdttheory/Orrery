@@ -21,8 +21,9 @@ struct Par{
 	float G = 6.6738480 * pow(10,-11); //m3*kg-1*s-2
 	float SolarMass = 1.98855*pow(10.0,30.0);
 	float AU = 149597870700; //meters
+	double boundaryDistanceSquared = pow(7311000000000*3,2);//must be greater than pluto's
 
-	//simulation integration parameters
+	//Single simulation integration parameters
 	float dt = 1*pow(10,4);
 	float maxT = 2*50000*dt;
 	unsigned long int maxTimeSteps = (maxT/dt);
@@ -36,23 +37,33 @@ struct Par{
 	//GA Params
 	float mutateChance = .01;
 	unsigned int satsPerCore = 5;
+	unsigned int maxGenerations = 10;
+	float breedingPercentage = .1;//10% of pop will breed to make next gen
+	float randomBreedPercentage = .25;//25% of breeding pop will be selected without bias for fitness
 
 	// Satellite params
 	float maxThrusterVel = 30000;
 	float startFuel = 1;
 	unsigned int thrustQuant = 5;
 	float satMass = 722;
-	string homePlanetName = "Earth";
+	string homePlanetName = "Mercury";
+
+	//fitness params
+	string destinationPlanetName = "Mars";
+	float goalDistance = 1;//multiplied by destiantion planet radius
+	//multiplied by pluto's aphelion
+
 
 	//TODO List:
 	/*
-	 * Parallelize loop of simulations
+	 * test breeding of sims with many satellites
 	 * Write fitness function
+	 * write outer loop of generations
+	 *
+	 * Parallelize loop of simulations
 	 * Write loop for parallelization
-	 * Small scale test
 	 * Parameter for max run time (realtime) & how often to check
 	 * Run on HPCC
-	 * Write outer (generational) loop with dummy breeding function
 	 * Improve breeding algorithm
 	 * Increase demands on GA with a more specific fitness function
 	 */

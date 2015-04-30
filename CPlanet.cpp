@@ -13,11 +13,13 @@ CPlanet::CPlanet() {
 	m_par = NULL;
 	m_ss = NULL;
 	m_mass = -1;
+	m_delFlag = false;
 	m_perihelion = -1;
 	m_aphelion = -1;
 	m_dynamics = CCoordSet();
 	m_name = "uninitialized";
 	m_angle = -1;
+	m_radius = -1;
 	cout << "ERROR: default constructor of CPlanet called\n";
 	return;
 }
@@ -27,11 +29,13 @@ CPlanet::CPlanet(vector<bool> flagforsatelliteuse) {
 	m_par = NULL;
 	m_ss = NULL;
 	m_mass = -1;
+	m_delFlag = false;
 	m_perihelion = -1;
 	m_aphelion = -1;
 	m_dynamics = CCoordSet();
 	m_name = "uninitialized";
 	m_angle = -1;
+	m_radius = 0;
 	return;
 }
 
@@ -39,23 +43,27 @@ CPlanet::CPlanet(const CPlanet& rhs) {
 	m_par = rhs.m_par;
 	m_ss = rhs.m_ss;
 	m_mass = rhs.m_mass;
+	m_delFlag = rhs.m_delFlag;
 	m_dynamics = rhs.m_dynamics;
 	m_name = rhs.m_name;
 	m_perihelion = rhs.m_perihelion;
 	m_aphelion = rhs.m_aphelion;
 	m_angle = rhs.m_angle;
+	m_radius = rhs.m_radius;
 }
 
 
-CPlanet::CPlanet(float angle, float mass, float peri, float ap, CCoordSet ccs, string name, Par* par, CSolarSystem* ss) {
+CPlanet::CPlanet(float angle, float mass, float peri, float ap, float rad, CCoordSet ccs, string name, Par* par, CSolarSystem* ss) {
 	m_ss = ss;
 	m_par = par;
 	m_mass = mass;
+	m_delFlag = false;
 	m_dynamics = ccs;
 	m_name = name;
 	m_perihelion = peri;
 	m_aphelion = ap;
 	m_angle = angle;
+	m_radius = rad;
 }
 
 CPlanet::~CPlanet() {
@@ -69,6 +77,8 @@ CPlanet CPlanet::operator=(const CPlanet& rhs)
 
 	m_par = rhs.m_par;
 	m_ss = rhs.m_ss;
+	m_delFlag = rhs.m_delFlag;
+	m_radius = rhs.m_radius;
 	m_mass = rhs.m_mass;
 	m_name = rhs.m_name;
 	m_angle = rhs.m_angle;

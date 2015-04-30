@@ -34,6 +34,7 @@ public:
 	CSatellite operator=(const CSatellite& rhs);
 	SatName m_name;
 	unsigned long long unsignedLongLongRand();
+	bool m_success;
 
 private:
 	bool m_dynamicsSet;

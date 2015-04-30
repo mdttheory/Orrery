@@ -20,7 +20,7 @@ class CPlanet {
 public:
 	CPlanet();
 	CPlanet(const CPlanet& rhs);
-	CPlanet(float angle, float mass, float peri, float ap, CCoordSet ccs, string name,
+	CPlanet(float angle, float mass, float peri, float ap, float rad, CCoordSet ccs, string name,
 			Par* par, CSolarSystem* ss);
 	CPlanet(vector<bool> flagforsatelliteuse);
 	virtual ~CPlanet();
@@ -33,13 +33,14 @@ public:
 	float m_mass;
 	string m_name;
 	float m_angle;
+	float m_radius;
+	bool m_delFlag;
 
 	float m_aphelion; // furthest from sun
 	float m_perihelion;
 
 	float calcTheorVel();
 	float calcEscapeVel(float r);
-
 	CSVector calcForce(CSolarSystem* ss);
 	float calcEccentricity();
 

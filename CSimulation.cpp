@@ -23,22 +23,23 @@ CSimulation::CSimulation(CSolarSystem solarSystem, Par* par, string name, unsign
 		a.m_name.selfID=a.unsignedLongLongRand();
 
 		tempSet = m_SS.getPlanetDynamics(a.m_homePlanetName);
-
-		//TODO Set velocity based on thrust[0] (force thrust[0] to start at t=0)
-		tempSet.m_velocity.m_y += solarSystem.m_planets[3].calcEscapeVel(6371000)*((i-2.0)/2.0);
-		tempSet.m_position.m_x = tempSet.m_position.m_x+6371000;
-
-
-
+		//tempSet.m_velocity.m_y += solarSystem.m_planets[3].calcEscapeVel(6371000)*((i-2.0)/2.0);
+		tempSet.m_position.m_y = -tempSet.m_position.m_y+m_SS.getPlanetRadius(a.m_homePlanetName);
 		a.setDynamics(tempSet);
 
 		a.m_thrusts[a.m_thrusts.size()-1].m_t[0]=0;
 
 		m_SS.m_sats.push_back(a);
-		}
+	}
+
+	m_SS.m_sats[0].getDynamicsPtr()->m_position.m_x=m_par->boundaryDistanceSquared*2;
+
+
 }
 
 CSimulation::CSimulation(CSolarSystem solarSystem, Par* par, string name, CSimulation b, CSimulation c, unsigned short coreNum) {
+	//TODO check vs init constructor
+
 	m_par = par;
 	m_name = name;
 	m_SS = solarSystem;
@@ -55,6 +56,8 @@ CSimulation::CSimulation(CSolarSystem solarSystem, Par* par, string name, CSimul
 		a.setDynamics(tempSet);
 		m_SS.m_sats.push_back(a);
 	}
+
+
 }
 
 CSimulation::~CSimulation() {
@@ -63,35 +66,40 @@ CSimulation::~CSimulation() {
 void CSimulation::Euler(CSVector &pos_i, CSVector &vel_i, string name){
 	float dt = m_par->dt;
 	CSVector new_pos = pos_i + vel_i*dt;
-	vel_i += CalcA(pos_i,name,dt)*dt;
+	bool temp = false;
+	vel_i += CalcA(pos_i,name,temp,dt)*dt;
 	pos_i = new_pos;
 }
 
-void CSimulation::RK(CSVector &pos_i, CSVector &vel_i, string name) {
+void CSimulation::RK(CSVector &pos_i, CSVector &vel_i, bool &delFlag, string name) {
 	// http://doswa.com/2009/01/02/fourth-order-runge-kutta-numerical-integration.html
 
 	float dt = m_par->dt;
+	if (pos_i.magSquared() > this->m_SS.m_par->boundaryDistanceSquared){
+			cout << "OutofBounds for satellite ";
+			delFlag = true;
+		}
+	else{
+		CSVector pos[4], vel[4], acc[4];
+		pos[0] = pos_i;
+		vel[0] = vel_i;
+		acc[0] = CalcA(pos[0], name, delFlag, dt / 2.0);
 
-	CSVector pos[4], vel[4], acc[4];
-	pos[0] = pos_i;
-	vel[0] = vel_i;
-	acc[0] = CalcA(pos[0], name, dt / 2.0);
+		pos[1] = pos_i + vel[0] * (dt * 0.5);
+		vel[1] = vel_i + acc[0] * (dt * 0.5);
+		acc[1] = CalcA(pos[1], name, delFlag, dt / 2.0);
 
-	pos[1] = pos_i + vel[0] * (dt * 0.5);
-	vel[1] = vel_i + acc[0] * (dt * 0.5);
-	acc[1] = CalcA(pos[1], name, dt / 2.0);
+		pos[2] = pos_i + vel[1] * (dt * 0.5);
+		vel[2] = vel_i + acc[1] * (dt * 0.5);
+		acc[2] = CalcA(pos[2], name, delFlag, dt / 2.0);
 
-	pos[2] = pos_i + vel[1] * (dt * 0.5);
-	vel[2] = vel_i + acc[1] * (dt * 0.5);
-	acc[2] = CalcA(pos[2], name, dt / 2.0);
+		pos[3] = pos_i + vel[2] * dt;
+		vel[3] = vel_i + acc[2] * dt;
+		acc[3] = CalcA(pos[3], name, delFlag, dt);
 
-	pos[3] = pos_i + vel[2] * dt;
-	vel[3] = vel_i + acc[2] * dt;
-	acc[3] = CalcA(pos[3], name, dt);
-
-	pos_i += (vel[0] + vel[1] * 2.0 + vel[2] * 2.0 + vel[3]) * (dt / 6.0);
-	vel_i += (acc[0] + acc[1] * 2.0 + acc[2] * 2.0 + acc[3]) * (dt / 6.0);
-
+		pos_i += (vel[0] + vel[1] * 2.0 + vel[2] * 2.0 + vel[3]) * (dt / 6.0);
+		vel_i += (acc[0] + acc[1] * 2.0 + acc[2] * 2.0 + acc[3]) * (dt / 6.0);
+	}
 	return;
 }
 
@@ -119,25 +127,37 @@ void CSimulation::RK(CSVector &pos_i, CSVector &vel_i, string name) {
 //	return (sum * dt * G);
 //}
 
-CSVector CSimulation::CalcA(CSVector pos, string name, float dt) {
+CSVector CSimulation::CalcA(CSVector pos, string name, bool &delFlag, float dt) {
 	CSVector sum, r_vec;
-	float G = this->m_SS.m_par->G;
 	double dist;
+
+
 
 	for (vector<CPlanet>::iterator it = m_SS.m_planets.begin();
 			it < m_SS.m_planets.end(); it++) {
 		dist = pos.distance(it->getDynamics().m_position);
-		double dist_cubed = pow(dist, 3);
-		if (dist_cubed == 0) dist_cubed = pow(10,-200);
 
-		if (it->m_name != name) {
-			r_vec = it->getDynamics().m_position + pos * -1.0;
-			sum += (r_vec / dist_cubed) * (it->m_mass);
+		if (it->m_name != name){
+			if (dist < it->m_radius){
+				cout << "Collision for satellite ";
+				delFlag = true;
+			}
+			else{
+				double dist_cubed = pow(dist, 3);
+				if (dist_cubed == 0)dist_cubed = pow(10,-200);
+
+				if (it->m_name != name) {
+					r_vec = it->getDynamics().m_position + pos * -1.0;
+					sum += (r_vec / dist_cubed) * (it->m_mass);
+				}
+			}
 		}
+
+
 		//else if (name == "Pluto")cout<<"v: "<<it->getDynamics().m_velocity << "\n";
 	}
 
-	return (sum * G);
+	return (sum * this->m_SS.m_par->G);
 }
 
 void CSimulation::print_pos(ostream &pos_stream) {
@@ -176,7 +196,7 @@ void CSimulation::update(unsigned long currStep) {
 	for (vector<CPlanet>::iterator it = newSS.m_planets.begin();
 				it < newSS.m_planets.end(); it++) {
 		if (m_par->integration_method == 4) {
-			RK(it->getDynamicsPtr()->m_position, it->getDynamicsPtr()->m_velocity, it->m_name);
+			RK(it->getDynamicsPtr()->m_position, it->getDynamicsPtr()->m_velocity, it->m_delFlag, it->m_name);
 		}
 		else if (m_par->integration_method == 1) {
 			Euler(it->getDynamicsPtr()->m_position, it->getDynamicsPtr()->m_velocity, it->m_name);
@@ -189,15 +209,42 @@ void CSimulation::update(unsigned long currStep) {
 	for (vector<CSatellite>::iterator it = newSS.m_sats.begin();
 					it < newSS.m_sats.end(); it++) {
 			if (m_par->integration_method == 4) {
-				RK(it->getDynamicsPtr()->m_position, it->getDynamicsPtr()->m_velocity, "NULL");
+				RK(it->getDynamicsPtr()->m_position, it->getDynamicsPtr()->m_velocity, it->m_delFlag, "Satellite");
 			}
 			else if (m_par->integration_method == 1) {
-				Euler(it->getDynamicsPtr()->m_position, it->getDynamicsPtr()->m_velocity, "NULL");
+				Euler(it->getDynamicsPtr()->m_position, it->getDynamicsPtr()->m_velocity, "Satellite");
 			}
 
 			else
 				cout << "ERROR, integration method set to " << m_par->integration_method
 						<< "\n";
 	}
+	unsigned int i = 0;
+
+	//remove all flagged sats
+	while(newSS.m_sats.begin()+i!=newSS.m_sats.end()){
+		int x = newSS.m_sats.size();
+		if (newSS.m_sats[i].m_delFlag){
+			cout << newSS.m_sats[i].m_name.selfID << " at timestep " << currStep <<  "\n";
+			newSS.m_sats.erase(newSS.m_sats.begin()+i);
+		}
+		else{
+			i++;
+		}
+	}
+
 	m_SS = newSS;
+}
+
+void CSimulation::genePrint(string simName){
+	cout << "Simulation Genetic Summary for sim : "<< simName << "\n";
+	unsigned int n = 0;
+	for (vector<CSatellite>::iterator it = m_SS.m_sats.begin();
+						it < m_SS.m_sats.end(); it++) {
+		cout << "   Mom" << " : " << it->m_name.momID << "\n";
+		cout << "   Dad" << " : " << it->m_name.dadID << "\n";
+		cout << "   Sat" << n << ": " << it->m_name.selfID << "\n";
+		it->printThrust(cout);
+		n++;
+	}
 }

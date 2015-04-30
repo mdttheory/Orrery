@@ -45,6 +45,9 @@ CSatellite::CSatellite(Par* par, CSolarSystem* ss, SatName name, vector<bool> fl
 	m_name = name;
 	m_dynamicsSet = false;
 	m_angle = -1;
+	m_delFlag = false;
+	m_radius = 0;
+	m_success = false;
 
 }
 
@@ -63,6 +66,9 @@ CSatellite::CSatellite(CSatellite rhs, vector<bool> flag) : CPlanet(flag) {
 	m_name = rhs.m_name;
 	m_dynamicsSet = rhs.m_dynamicsSet;
 	m_angle = rhs.m_angle;
+	m_delFlag = false;
+	m_radius = rhs.m_radius;
+	m_success = false;
 }
 
 CSatellite CSatellite::operator*(CSatellite& rhs)
@@ -102,6 +108,9 @@ CSatellite CSatellite::operator=(const CSatellite& rhs)
 	m_name = rhs.m_name;
 	m_dynamicsSet = rhs.m_dynamicsSet;
 	m_angle = rhs.m_angle;
+	m_delFlag = false;
+	m_radius = rhs.m_radius;
+	m_success = false;
 
 	return *this;
 }
@@ -110,6 +119,7 @@ CSatellite::CSatellite() {
 	m_fuel = -1;
 	m_thrustQuant = -1;
 	m_dynamicsSet = false;
+	m_success = false;
 	cout << "ERROR: Default constructor of CSatellite called.\n";
 }
 
