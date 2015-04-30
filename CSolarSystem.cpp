@@ -220,3 +220,11 @@ void CSolarSystem::adjustMomentum(){
 
 	return;
 }
+
+CCoordSet CSolarSystem::getPlanetDynamics(string name){
+	unsigned short i = 0;
+	while(m_planets[i].m_name != name){
+		i++;
+	}
+	return m_planets[i].getDynamics();
+}

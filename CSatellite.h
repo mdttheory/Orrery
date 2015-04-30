@@ -20,7 +20,8 @@ using namespace std;
 
 class CSatellite : public CPlanet{
 public:
-	CSatellite(Par* par, CSolarSystem* ss, string name, vector<bool> flag);
+	CSatellite(Par* par, CSolarSystem* ss, SatName name, vector<bool> flag);
+	CSatellite(CSatellite rhs, vector<bool> flag);
 	CSatellite();
 	virtual ~CSatellite();
 	float m_fuel;
@@ -28,6 +29,14 @@ public:
 	string m_homePlanetName;
 	vector<CChromosome> m_thrusts;
 	void printThrust(ostream &output);
+	void setDynamics(CCoordSet dynamics);
+	CSatellite operator*(CSatellite& rhs);
+	CSatellite operator=(const CSatellite& rhs);
+	SatName m_name;
+	unsigned long long unsignedLongLongRand();
+
+private:
+	bool m_dynamicsSet;
 
 };
 

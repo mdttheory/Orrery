@@ -113,3 +113,8 @@ float CPlanet::calcTheorVel()
 	return sqrt(m_par->G*m_par->SolarMass*(2.0/m_dynamics.m_position.mag()-1.0/a));
 }
 
+float CPlanet::calcEscapeVel(float r)
+{
+	return sqrt(m_mass*2.0*m_par->G/r);
+}
+

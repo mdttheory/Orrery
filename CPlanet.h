@@ -38,6 +38,7 @@ public:
 	float m_perihelion;
 
 	float calcTheorVel();
+	float calcEscapeVel(float r);
 
 	CSVector calcForce(CSolarSystem* ss);
 	float calcEccentricity();

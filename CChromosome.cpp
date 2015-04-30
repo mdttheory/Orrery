@@ -7,16 +7,17 @@
 
 #include "CChromosome.h"
 
-CChromosome::CChromosome(Par* par) {
+CChromosome::CChromosome(Par* par, unsigned short coreNum) {
 	for(unsigned short i = 0; i<3;i++){
 		m_dvx.push_back(0);
 		m_dvy.push_back(0);
 		m_dvz.push_back(0);
 		m_t.push_back(0);
 	}
+	m_coreNum = coreNum;
 
 
-	unsigned seed = chrono::high_resolution_clock::now().time_since_epoch().count();
+	unsigned seed = chrono::high_resolution_clock::now().time_since_epoch().count()+m_coreNum;
 	default_random_engine gen(seed);
 	uniform_real_distribution<float> distThrust(-1.0*(par->maxThrusterVel),par->maxThrusterVel);
 	uniform_int_distribution<int> distTime(0,par->maxTimeSteps);
@@ -41,6 +42,7 @@ CChromosome::CChromosome(Par* par) {
 }
 CChromosome::CChromosome(const CChromosome &rhs) {
 	m_par = rhs.m_par;
+	m_coreNum = rhs.m_coreNum;
 
 	for(unsigned short i = 0; i<3;i++){
 			m_dvx.push_back(0);
@@ -106,7 +108,7 @@ CChromosome CChromosome::operator*(CChromosome& rhs)
 
 	for(unsigned short i = 0;i<newChrom.chromSize();i++){
 
-		unsigned seed = chrono::high_resolution_clock::now().time_since_epoch().count();
+		unsigned seed = chrono::high_resolution_clock::now().time_since_epoch().count()+i+m_coreNum;
 		default_random_engine gen(seed);
 		uniform_real_distribution<float> dist(newChrom[i][1],newChrom[i][2]);
 		uniform_real_distribution<float> randOne(0,1);

@@ -14,7 +14,7 @@
 
 class CChromosome {
 public:
-	CChromosome(Par* par);
+	CChromosome(Par* par, unsigned short coreNum);
 	CChromosome(const CChromosome &rhs);
 	virtual ~CChromosome();
 	Par* m_par;
@@ -23,6 +23,7 @@ public:
 	vector<float> m_dvy;
 	vector<float> m_dvz;
 	vector<float> m_t;
+	unsigned short m_coreNum;
 	int chromSize() const {
 		return 4;
 	}

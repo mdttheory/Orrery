@@ -48,21 +48,14 @@ int main()
 	Par par;
 	CSolarSystem newSS(&par);
 	vector<CSimulation> sims;
-
-	CSimulation RKSim(newSS, &par, "RK4");
+	//TODO: 2nd int params are gen,corenum
+	CSimulation RKSim(newSS, &par, "RK4",0,0);
 	RKSim.print_pos(pos_stream);
 	double init_en = RKSim.m_SS.totalEnergy();
 
 	Par par2 = par;
 	par2.integration_method=1;
-	CSimulation EulerSim(newSS, &par2, "Euler");
-
-	vector<bool> flag;
-	for (unsigned int i = 0; i<par.satsPerCore;i++){
-		CSatellite a(&par, &newSS, string(string("Sat")+to_string(i)), flag);
-		RKSim.m_SS.m_sats.push_back(a);
-		a.printThrust(cout);
-	}
+	CSimulation EulerSim(newSS, &par2, "Euler",0,0);
 
 
 	sims.push_back(RKSim);
@@ -102,7 +95,7 @@ int main()
 					en_stream << "\n";
 				}
 
-				it->update();
+				it->update(t);
 			}
 		en_stream << "-\n"; // Mark new simulation
 	}

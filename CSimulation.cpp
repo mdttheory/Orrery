@@ -7,11 +7,53 @@
 
 #include "CSimulation.h"
 
-CSimulation::CSimulation(CSolarSystem solarSystem, Par* par, string name) {
+CSimulation::CSimulation(CSolarSystem solarSystem, Par* par, string name, unsigned short coreNum, unsigned int genNum) {
+	m_par = par;
+	m_name = name;
+	m_coreNum = coreNum;
+	m_genNum = genNum;
+	m_SS = solarSystem;
+	vector<bool> flag;
+	CCoordSet tempSet;
+	for (unsigned int i = 0; i<m_par->satsPerCore;i++){
+		SatName newSatelliteName;
+		newSatelliteName.coreNum=coreNum;
+		newSatelliteName.genNum=genNum;
+		CSatellite a(m_par, &m_SS, newSatelliteName, flag);
+		a.m_name.selfID=a.unsignedLongLongRand();
+
+		tempSet = m_SS.getPlanetDynamics(a.m_homePlanetName);
+
+		//TODO Set velocity based on thrust[0] (force thrust[0] to start at t=0)
+		tempSet.m_velocity.m_y += solarSystem.m_planets[3].calcEscapeVel(6371000)*((i-2.0)/2.0);
+		tempSet.m_position.m_x = tempSet.m_position.m_x+6371000;
+
+
+
+		a.setDynamics(tempSet);
+
+		a.m_thrusts[0].m_t[0]=0;
+		m_SS.m_sats.push_back(a);
+		}
+}
+
+CSimulation::CSimulation(CSolarSystem solarSystem, Par* par, string name, CSimulation b, CSimulation c, unsigned short coreNum) {
 	m_par = par;
 	m_name = name;
 	m_SS = solarSystem;
-
+	m_coreNum = coreNum;
+	m_genNum = b.m_genNum + 1;
+	vector<bool> flag;
+	CCoordSet tempSet;
+	for (unsigned int i = 0; i<m_par->satsPerCore;i++){
+		CSatellite a(b.m_SS.m_sats[i], flag);
+		a = b.m_SS.m_sats[i]*c.m_SS.m_sats[i];
+		tempSet = m_SS.getPlanetDynamics(a.m_homePlanetName);
+		//TODO Set velocity based on thrust[0] (force thrust[0] to start at t=0)
+		tempSet.m_velocity.m_x = tempSet.m_velocity.m_y*10*i;
+		a.setDynamics(tempSet);
+		m_SS.m_sats.push_back(a);
+	}
 }
 
 CSimulation::~CSimulation() {
@@ -52,29 +94,29 @@ void CSimulation::RK(CSVector &pos_i, CSVector &vel_i, string name) {
 	return;
 }
 
-CSVector CSimulation::CalcDv(float dt, vector<CPlanet> planets,
-		unsigned short i) {
-	CSVector v_init, new_v, sum, r_vec, zero;
-	float G = this->m_SS.m_par->G;
-	float dist;
-
-	sum = zero;
-	for (vector<CPlanet>::iterator it = m_SS.m_planets.begin();
-			it < m_SS.m_planets.end(); it++) {
-		dist = m_SS.m_planets[i].getDynamics().m_position.distance(
-				it->getDynamics().m_position);
-
-		if (dist > 0) {
-			//TODO: Check direction of r_vec
-			r_vec = it->getDynamics().m_position
-					+ m_SS.m_planets[i].getDynamics().m_position * -1.0;
-			sum += (r_vec / pow(dist, 3)) * (it->m_mass);
-
-		}
-	}
-
-	return (sum * dt * G);
-}
+//CSVector CSimulation::CalcDv(float dt, vector<CPlanet> planets,
+//		unsigned short i) {
+//	CSVector v_init, new_v, sum, r_vec, zero;
+//	float G = this->m_SS.m_par->G;
+//	float dist;
+//
+//	sum = zero;
+//	for (vector<CPlanet>::iterator it = m_SS.m_planets.begin();
+//			it < m_SS.m_planets.end(); it++) {
+//		dist = m_SS.m_planets[i].getDynamics().m_position.distance(
+//				it->getDynamics().m_position);
+//
+//		if (dist > 0) {
+//			//TODO: Check direction of r_vec
+//			r_vec = it->getDynamics().m_position
+//					+ m_SS.m_planets[i].getDynamics().m_position * -1.0;
+//			sum += (r_vec / pow(dist, 3)) * (it->m_mass);
+//
+//		}
+//	}
+//
+//	return (sum * dt * G);
+//}
 
 CSVector CSimulation::CalcA(CSVector pos, string name, float dt) {
 	CSVector sum, r_vec;
@@ -102,6 +144,10 @@ void CSimulation::print_pos(ostream &pos_stream) {
 			it < m_SS.m_planets.end(); it++) {
 		pos_stream << (*(it->getDynamicsPtr())).m_position << "\n";
 	}
+	for (vector<CSatellite>::iterator it = m_SS.m_sats.begin();
+			it < m_SS.m_sats.end(); it++) {
+		pos_stream << (*(it->getDynamicsPtr())).m_position << "\n";
+	}
 	pos_stream << "-\n";
 
 }
@@ -112,9 +158,20 @@ void CSimulation::print_en(ostream &en_stream, double init_en) {
 
 }
 
-void CSimulation::update() {
+void CSimulation::update(unsigned long currStep) {
 	//cout << "Using integration method " << m_par->integration_method << "\n";
 	CSolarSystem newSS(m_SS);
+
+	for (vector<CSatellite>::iterator it = newSS.m_sats.begin();
+				it < newSS.m_sats.end(); it++) {
+		if(it->m_thrusts[it->m_thrusts.size()-1].m_t[0] == currStep){
+			it->getDynamicsPtr()->m_velocity.m_x+=it->m_thrusts[it->m_thrusts.size()-1].m_dvx[0];
+			it->getDynamicsPtr()->m_velocity.m_y+=it->m_thrusts[it->m_thrusts.size()-1].m_dvy[0];
+			it->getDynamicsPtr()->m_velocity.m_z+=it->m_thrusts[it->m_thrusts.size()-1].m_dvz[0];
+			it->m_thrusts.pop_back();
+		}
+	}
+
 	for (vector<CPlanet>::iterator it = newSS.m_planets.begin();
 				it < newSS.m_planets.end(); it++) {
 		if (m_par->integration_method == 4) {
@@ -127,6 +184,19 @@ void CSimulation::update() {
 		else
 			cout << "ERROR, integration method set to " << m_par->integration_method
 					<< "\n";
+	}
+	for (vector<CSatellite>::iterator it = newSS.m_sats.begin();
+					it < newSS.m_sats.end(); it++) {
+			if (m_par->integration_method == 4) {
+				RK(it->getDynamicsPtr()->m_position, it->getDynamicsPtr()->m_velocity, "NULL");
+			}
+			else if (m_par->integration_method == 1) {
+				Euler(it->getDynamicsPtr()->m_position, it->getDynamicsPtr()->m_velocity, "NULL");
+			}
+
+			else
+				cout << "ERROR, integration method set to " << m_par->integration_method
+						<< "\n";
 	}
 	m_SS = newSS;
 }
