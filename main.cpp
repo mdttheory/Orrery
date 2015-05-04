@@ -27,11 +27,11 @@ int main()
 	pos_buf = pos_of.rdbuf();
 	ostream pos_stream(pos_buf);
 
-	streambuf * en_buf;
-	ofstream en_of;
-	en_of.open("data/delta_E.txt");
-	en_buf = en_of.rdbuf();
-	ostream en_stream(en_buf);
+//	streambuf * en_buf;
+//	ofstream en_of;
+//	en_of.open("data/delta_E.txt");
+//	en_buf = en_of.rdbuf();
+//	ostream en_stream(en_buf);
 
 	streambuf * param_buf;
 	ofstream param_of;
@@ -45,12 +45,17 @@ int main()
 	com_buf = com_of.rdbuf();
 	ostream com_stream(com_buf);
 
+	streambuf * success_buf;
+	ofstream success_of;
+	success_of.open("data/success.txt");
+	success_buf = success_of.rdbuf();
+	ostream success_stream(success_buf);
+
 	Par par;
 	CSolarSystem newSS(&par);
 	// 2nd int params are gen,corenum
 	CSimulation RKSim(newSS, &par, "RK4",0,0);
-	RKSim.genePrint(string("presim"));
-	RKSim.print_pos(pos_stream);
+	//RKSim.print_pos(pos_stream);
 
 	//TODO: update parameter output
 	param_stream << "-----"<<RKSim.m_name << "-----\n";
@@ -63,25 +68,18 @@ int main()
 	param_stream << "print_freq: " << RKSim.m_par->print_freq << "\n\n";
 
 	for (unsigned int g =0;g<par.maxGenerations;g++){
-
 			for(unsigned long int t = 0; t<RKSim.m_par->maxTimeSteps; t++){
 					if(int(t)%par.print_freq==0){
 						cout << "Timestep " << t << " of " << RKSim.m_par->maxTimeSteps << "\n";
-
-
-						RKSim.print_pos(pos_stream);
-
+						//RKSim.print_pos(pos_stream);
 					}
-
 					RKSim.update(t);
 				}
-
-		//CSolarSystem newSS(&par);
-		//CSimulation a(string("RKSim"), &par, newSS, RKSim, 0);
-		//a.genePrint(string(string("Generation#: ")+to_string(g)));
+			cout << "Generation: " << RKSim.m_genNum << "\n";
 		RKSim = RKSim*RKSim;
-		RKSim.genePrint("Gene");
-		//RKSim = a;
+		RKSim.successPrint(success_stream);
+
+		//RKSim.genePrint("Gene");
 	}
 	param_of.close();
 
@@ -100,9 +98,10 @@ int main()
 		}
 	}*/
 
-	en_of.close();
+	//en_of.close();
 	pos_of.close();
 	com_of.close();
+	success_of.close();
 	cout << "PROGRAM TERMINATING!\n";
 	return 0;
 }

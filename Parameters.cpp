@@ -25,10 +25,10 @@ struct Par{
 
 	//Single simulation integration parameters
 	float dt = 1*pow(10,4);
-	float maxT = 10000*dt;
+	float maxT = 12*1000*dt;
 	unsigned long int maxTimeSteps = (maxT/dt);
 	unsigned short integration_method = 4;
-	unsigned short print_freq = 2500;
+	unsigned short print_freq = maxT/dt/30;
 	//0 = errorflag
 	//1 = Euler
 	//2 = 2nd order Runga-Kutta
@@ -36,10 +36,10 @@ struct Par{
 
 	//GA Params
 	float mutateChance = .2;
-	unsigned int satsPerCore = 10;
-	unsigned int maxGenerations = 1;
-	float breedingNum = 10;//# will breed
-	float randomBreedingNum = 1;//# of breeding pop will be selected without bias for fitness
+	unsigned int satsPerCore = 50;
+	unsigned int maxGenerations = 10;
+	float breedingNum = 15;//# will breed
+	float randomBreedingNum = 10;//# of breeding pop will be selected without bias for fitness
 
 	// Satellite params
 	float maxThrusterVel = 30000;
@@ -49,7 +49,7 @@ struct Par{
 
 	//fitness params
 	string destinationPlanetName = "Mars";
-	float goalDistanceMultiplier = 1;//multiplied by destiantion planet radius (must be >= 1)
+	float goalDistanceMultiplier = 6650;//multiplied by destiantion planet radius (must be >= 1)
 	//multiplied by pluto's aphelion
 
 

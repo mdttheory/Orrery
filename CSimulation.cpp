@@ -39,7 +39,6 @@ CSimulation::CSimulation(CSolarSystem solarSystem, Par* par, string name, unsign
 
 CSimulation::CSimulation(CSolarSystem solarSystem, Par* par, string name, vector<CSatellite> sats, unsigned short coreNum, unsigned int genNum) {
 
-
 	m_par = par;
 	m_name = name;
 	m_coreNum = coreNum;
@@ -52,6 +51,7 @@ CSimulation::CSimulation(CSolarSystem solarSystem, Par* par, string name, vector
 }
 
 CSimulation CSimulation::operator=(const CSimulation &rhs) {
+
 	m_name = rhs.m_name;
 	m_coreNum = rhs.m_coreNum;
 	m_genNum = rhs.m_genNum;
@@ -61,6 +61,17 @@ CSimulation CSimulation::operator=(const CSimulation &rhs) {
 	m_deadList = rhs.m_deadList;
 	m_SS = rhs.m_SS;
 	return *this;
+}
+
+CSimulation::CSimulation(const CSimulation &rhs) {
+	m_name = rhs.m_name;
+	m_coreNum = rhs.m_coreNum;
+	m_genNum = rhs.m_genNum;
+	m_par = rhs.m_par;
+	m_succList = rhs.m_succList;
+	m_breedList = rhs.m_breedList;
+	m_deadList = rhs.m_deadList;
+	m_SS = rhs.m_SS;
 }
 
 //
@@ -281,7 +292,7 @@ CSVector CSimulation::CalcA(CSVector pos, string name, bool &delFlag, bool &succ
 		}
 
 
-		//else if (name == "Pluto")cout<<"v: "<<it->getDynamics().m_velocity << "\n";
+		//else if (name == "Pluto")cout<<"v: "<<it->getDynamics().m_velocity << endl;
 	}
 
 	return (sum * this->m_SS.m_par->G);
@@ -290,11 +301,11 @@ CSVector CSimulation::CalcA(CSVector pos, string name, bool &delFlag, bool &succ
 void CSimulation::print_pos(ostream &pos_stream) {
 	for (vector<CPlanet>::iterator it = m_SS.m_planets.begin();
 			it < m_SS.m_planets.end(); it++) {
-		pos_stream << (*(it->getDynamicsPtr())).m_position << "\n";
+		pos_stream << (*(it->getDynamicsPtr())).m_position << endl;
 	}
 	for (vector<CSatellite>::iterator it = m_SS.m_sats.begin();
 			it < m_SS.m_sats.end(); it++) {
-		pos_stream << (*(it->getDynamicsPtr())).m_position << "\n";
+		pos_stream << (*(it->getDynamicsPtr())).m_position << endl;
 	}
 	pos_stream << "-\n";
 
@@ -307,7 +318,7 @@ void CSimulation::print_en(ostream &en_stream, double init_en) {
 }
 
 void CSimulation::update(unsigned long currStep) {
-	//cout << "Using integration method " << m_par->integration_method << "\n";
+	//cout << "Using integration method " << m_par->integration_method << endl;
 	CSolarSystem newSS(m_SS);
 
 	for (vector<CSatellite>::iterator it = newSS.m_sats.begin();
@@ -333,7 +344,7 @@ void CSimulation::update(unsigned long currStep) {
 
 		else
 			cout << "ERROR, integration method set to " << m_par->integration_method
-					<< "\n";
+					<< endl;
 	}
 	for (vector<CSatellite>::iterator it = newSS.m_sats.begin();
 					it < newSS.m_sats.end(); it++) {
@@ -346,7 +357,7 @@ void CSimulation::update(unsigned long currStep) {
 
 			else
 				cout << "ERROR, integration method set to " << m_par->integration_method
-						<< "\n";
+						<< endl;
 	}
 	unsigned int i = 0;
 
@@ -354,11 +365,13 @@ void CSimulation::update(unsigned long currStep) {
 	//remove all flagged sats
 	while(newSS.m_sats.begin()+i!=newSS.m_sats.end()){
 		if (newSS.m_sats[i].m_delFlag){
-			if(newSS.m_sats[i].m_succFlag)m_succList.push_back(newSS.m_sats[i]);
+			if(newSS.m_sats[i].m_succFlag){
+				m_succList.push_back(newSS.m_sats[i]);
+			}
 			else{
 				m_deadList.push_back(newSS.m_sats[i]);
 			}
-			cout << newSS.m_sats[i].m_name.selfID << " at timestep " << currStep <<  "\n";
+			cout << newSS.m_sats[i].m_name.selfID << " at timestep " << currStep <<  endl;
 			newSS.m_sats.erase(newSS.m_sats.begin()+i);
 		}
 		else{
@@ -369,39 +382,34 @@ void CSimulation::update(unsigned long currStep) {
 	m_SS = newSS;
 }
 
+void CSimulation::successPrint(ostream& output){
+
+	for (vector<CSatellite>::iterator it = m_SS.m_sats.begin();
+							it < m_SS.m_sats.end(); it++) {
+		if(it->m_succFlag){
+			output << "   Mom" << " : " << it->m_name.momID << endl;
+			output << "   Dad" << " : " << it->m_name.dadID << endl;
+			output << "   SelfID: " << it->m_name.selfID << endl;
+			output << "   Generation: " << it->m_name.genNum << endl;
+			output << "   Core: " << it->m_name.coreNum << endl;
+			output << "   Sat: " << it->m_name.selfID << endl;
+			it->printThrust(output);
+		}
+
+	}
+
+
+
+}
 void CSimulation::genePrint(string simName){
-	cout << "Simulation Genetic Summary for sim : "<< simName << "\n";
+	cout << "Simulation Genetic Summary for sim : "<< simName << endl;
 	unsigned int n = 0;
 	for (vector<CSatellite>::iterator it = m_SS.m_sats.begin();
 						it < m_SS.m_sats.end(); it++) {
-		cout << "   Mom" << " : " << it->m_name.momID << "\n";
-		cout << "   Dad" << " : " << it->m_name.dadID << "\n";
-		cout << "   Sat" << n << ": " << it->m_name.selfID << "\n";
+		cout << "   Mom" << " : " << it->m_name.momID << endl;
+		cout << "   Dad" << " : " << it->m_name.dadID << endl;
+		cout << "   Sat" << n << ": " << it->m_name.selfID << endl;
 		it->printThrust(cout);
 		n++;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -13,12 +13,15 @@
 #include "CSolarSystem.h"
 #include <fstream>
 #include <vector>
+#include <fstream>
 
 class CSimulation {
 public:
 	CSimulation(CSolarSystem solarSystem, Par *par, string name, unsigned short coreNum, unsigned int genNum);
 	CSimulation(CSolarSystem solarSystem, Par* par, string name, vector<CSatellite> sats, unsigned short coreNum, unsigned int genNum);
 	CSimulation(string name, Par* par, const CSolarSystem solarSystem, CSimulation b, unsigned short coreNum);
+	CSimulation (const CSimulation &rhs);
+
 	virtual ~CSimulation();
 	void RK(CSVector &pos_i, CSVector &vel_i, bool &delFlag, bool &succFlag, string name);
 	void Euler(CSVector &pos_i, CSVector &vel_i, string name);
@@ -32,6 +35,7 @@ public:
 	unsigned int m_genNum;
 	Par* m_par;
 	void genePrint(string simName);
+	void successPrint(ostream& output);
 	vector<CSatellite> m_succList;
 	vector<CSatellite> m_breedList;
 	vector<CSatellite> m_deadList;

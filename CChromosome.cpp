@@ -108,8 +108,6 @@ CChromosome CChromosome::operator=(const CChromosome& rhs){
 
 void CChromosome::printChrom(ostream &output){
 	output << m_dvx[0] << " " << m_dvy[0] << " " << m_dvz[0] << " " << m_t[0] << "\n";
-
-
 }
 
 CChromosome CChromosome::operator*(CChromosome& rhs)
