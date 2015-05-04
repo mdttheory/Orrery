@@ -47,58 +47,43 @@ int main()
 
 	Par par;
 	CSolarSystem newSS(&par);
-	vector<CSimulation> sims;
-	//TODO: 2nd int params are gen,corenum
+	// 2nd int params are gen,corenum
 	CSimulation RKSim(newSS, &par, "RK4",0,0);
+	RKSim.genePrint(string("presim"));
 	RKSim.print_pos(pos_stream);
-	double init_en = RKSim.m_SS.totalEnergy();
 
-	Par par2 = par;
-	par2.integration_method=1;
-	CSimulation EulerSim(newSS, &par2, "Euler",0,0);
+	//TODO: update parameter output
+	param_stream << "-----"<<RKSim.m_name << "-----\n";
+	param_stream << "AU: " << RKSim.m_par->AU << "\n";
+	param_stream << "G: " << RKSim.m_par->G << "\n";
+	param_stream << "SolarMass: " << RKSim.m_par->SolarMass << "\n";
+	param_stream << "dt: " << RKSim.m_par->dt << "\n";
+	param_stream << "maxT: " <<RKSim.m_par->maxT << "\n";
+	param_stream << "integration_method: " << RKSim.m_par->integration_method << "\n";
+	param_stream << "print_freq: " << RKSim.m_par->print_freq << "\n\n";
 
+	for (unsigned int g =0;g<par.maxGenerations;g++){
 
-	sims.push_back(RKSim);
-	//sims.push_back(EulerSim);
-
-	RKSim.genePrint("Sim1");
-
-	for (vector<CSimulation>::iterator it = sims.begin();
-				it < sims.end(); it++) {
-
-		param_stream << "-----"<<it->m_name << "-----\n";
-		param_stream << "AU: " << it->m_par->AU << "\n";
-		param_stream << "G: " << it->m_par->G << "\n";
-		param_stream << "SolarMass: " << it->m_par->SolarMass << "\n";
-		param_stream << "dt: " << it->m_par->dt << "\n";
-		param_stream << "maxT: " << it->m_par->maxT << "\n";
-		param_stream << "integration_method: " << it->m_par->integration_method << "\n";
-		param_stream << "print_freq: " << it->m_par->print_freq << "\n\n";
-
-		struct timeval tp;
-		gettimeofday(&tp,NULL);
-		long int ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
-		for(unsigned long int t = 0; t<it->m_par->maxTimeSteps; t++){
-				if(int(t)%par.print_freq==0){
-					cout << "Timestep " << t << " of " << it->m_par->maxTimeSteps << "\n";
+			for(unsigned long int t = 0; t<RKSim.m_par->maxTimeSteps; t++){
+					if(int(t)%par.print_freq==0){
+						cout << "Timestep " << t << " of " << RKSim.m_par->maxTimeSteps << "\n";
 
 
-					if(it->m_name == RKSim.m_name){
-						it->print_pos(pos_stream);
-						//com_stream << it->m_SS.calcCOM() << "\n";
+						RKSim.print_pos(pos_stream);
+
 					}
-					it->print_en(en_stream, init_en);
-					gettimeofday(&tp,NULL);
-					en_stream << ", " << t << ", " << (tp.tv_sec * 1000 + tp.tv_usec / 1000-ms);
-					en_stream << ", " << it->m_SS.kinetic() << ", " << it->m_SS.potential();
-					en_stream << "\n";
+
+					RKSim.update(t);
 				}
 
-				it->update(t);
-			}
-		en_stream << "-\n"; // Mark new simulation
+		//CSolarSystem newSS(&par);
+		//CSimulation a(string("RKSim"), &par, newSS, RKSim, 0);
+		//a.genePrint(string(string("Generation#: ")+to_string(g)));
+		RKSim = RKSim*RKSim;
+		RKSim.genePrint("derp");
+		//RKSim = a;
+		cout << "hi\n";
 	}
-
 	param_of.close();
 
 
@@ -119,6 +104,7 @@ int main()
 	en_of.close();
 	pos_of.close();
 	com_of.close();
+	cout << "PROGRAM TERMINATING!\n";
 	return 0;
 }
 

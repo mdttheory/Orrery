@@ -40,16 +40,17 @@ CChromosome::CChromosome(Par* par, unsigned short coreNum) {
 	m_t[2] = float((par->maxTimeSteps));
 	m_t[0] = float(distTime(gen));
 }
+
 CChromosome::CChromosome(const CChromosome &rhs) {
 	m_par = rhs.m_par;
 	m_coreNum = rhs.m_coreNum;
 
 	for(unsigned short i = 0; i<3;i++){
-			m_dvx.push_back(0);
-			m_dvy.push_back(0);
-			m_dvz.push_back(0);
-			m_t.push_back(0);
-		}
+		m_dvx.push_back(0);
+		m_dvy.push_back(0);
+		m_dvz.push_back(0);
+		m_t.push_back(0);
+	}
 
 	m_dvx[1] = rhs.m_dvx[1];
 	m_dvx[2] = rhs.m_dvx[2];
@@ -70,7 +71,6 @@ CChromosome::CChromosome(const CChromosome &rhs) {
 
 
 CChromosome::~CChromosome() {
-	// TODO Auto-generated destructor stub
 }
 
 
@@ -93,6 +93,7 @@ CChromosome CChromosome::operator=(const CChromosome& rhs){
 	m_t[2] = rhs.m_t[2];
 	m_t[0] = rhs.m_t[0];
 
+
 	return rhs;
 }
 
@@ -104,41 +105,39 @@ void CChromosome::printChrom(ostream &output){
 
 CChromosome CChromosome::operator*(CChromosome& rhs)
 {
-	CChromosome newChrom(rhs);
+	CChromosome newChrom(*this);
+	uniform_real_distribution<float> randOne(0,1);
 
 	for(unsigned short i = 0;i<newChrom.chromSize();i++){
-
 		unsigned seed = chrono::high_resolution_clock::now().time_since_epoch().count()+i+m_coreNum;
 		default_random_engine gen(seed);
-		uniform_real_distribution<float> dist(newChrom[i][1],newChrom[i][2]);
-		uniform_real_distribution<float> randOne(0,1);
+		uniform_real_distribution<float> dist((*newChrom[i])[1],(*newChrom[i])[2]);
 		float r = randOne(gen);
-		cout << "R: " << r << "\n";
 		if (r < m_par->mutateChance){
-			newChrom[i][0] = dist(gen);
+			//cout << "Mutating\n";
+			(*newChrom[i])[0] = dist(gen);
 		}
 		else if (r < (m_par->mutateChance+1.0)/2.0){
-			newChrom[i][0] = (*this)[i][0];
-			cout << "Using lhs\n";
+			(*newChrom[i])[0] = (*(*this)[i])[0];
+			//cout << "Using lhs\n";
 		}
 		else {
-			newChrom[i][0] = rhs[i][0];
-			cout << "Using rhs\n";
+			(*newChrom[i])[0] = (*rhs[i])[0];
+			//cout << "Using rhs\n";
 		}
 	}
 	return newChrom;
 }
 
-vector<float> CChromosome::operator[](int nIndex)
+vector<float> *CChromosome::operator[](int nIndex)
 {
-	if (nIndex==0)return m_dvx;
-	else if (nIndex==1)return m_dvy;
-	else if (nIndex==2)return m_dvz;
-	else if (nIndex==3)return m_t;
+	if (nIndex==0)return &m_dvx;
+	else if (nIndex==1)return &m_dvy;
+	else if (nIndex==2)return &m_dvz;
+	else if (nIndex==3)return &m_t;
 	else{
-		cout << "ERROR CChromosome::operator[] has invalid index " << nIndex << "\n";
-		vector<float> x;
-		return x;
+		cout << "ERROR CChromosome::operator[] has invalid index " << nIndex << "\n";\
+		return  NULL;
 	}
 
 }

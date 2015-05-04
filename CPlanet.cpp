@@ -19,25 +19,10 @@ CPlanet::CPlanet() {
 	m_dynamics = CCoordSet();
 	m_name = "uninitialized";
 	m_angle = -1;
-	m_radius = -1;
-	cout << "ERROR: default constructor of CPlanet called\n";
-	return;
-}
-
-CPlanet::CPlanet(vector<bool> flagforsatelliteuse) {
-	//SURPRISE!
-	m_par = NULL;
-	m_ss = NULL;
-	m_mass = -1;
-	m_delFlag = false;
-	m_perihelion = -1;
-	m_aphelion = -1;
-	m_dynamics = CCoordSet();
-	m_name = "uninitialized";
-	m_angle = -1;
 	m_radius = 0;
 	return;
 }
+
 
 CPlanet::CPlanet(const CPlanet& rhs) {
 	m_par = rhs.m_par;

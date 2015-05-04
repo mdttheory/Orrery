@@ -25,38 +25,36 @@ struct Par{
 
 	//Single simulation integration parameters
 	float dt = 1*pow(10,4);
-	float maxT = 2*50000*dt;
+	float maxT = 0*10000*dt;
 	unsigned long int maxTimeSteps = (maxT/dt);
 	unsigned short integration_method = 4;
-	unsigned short print_freq = 5;
+	unsigned short print_freq = 1000000000;
 	//0 = errorflag
 	//1 = Euler
 	//2 = 2nd order Runga-Kutta
 	//4 = 4th order Runga-Kutta
 
 	//GA Params
-	float mutateChance = .01;
-	unsigned int satsPerCore = 5;
-	unsigned int maxGenerations = 10;
-	float breedingPercentage = .1;//10% of pop will breed to make next gen
-	float randomBreedPercentage = .25;//25% of breeding pop will be selected without bias for fitness
+	float mutateChance = .2;
+	unsigned int satsPerCore = 10;
+	unsigned int maxGenerations = 3;
+	float breedingNum = 3;//10 will breed
+	float randomBreedingNum = 1;//2 of breeding pop will be selected without bias for fitness
 
 	// Satellite params
 	float maxThrusterVel = 30000;
-	float startFuel = 1;
-	unsigned int thrustQuant = 5;
+	unsigned int thrustQuant = 2;
 	float satMass = 722;
 	string homePlanetName = "Mercury";
 
 	//fitness params
 	string destinationPlanetName = "Mars";
-	float goalDistance = 1;//multiplied by destiantion planet radius
+	float goalDistanceMultiplier = 1;//multiplied by destiantion planet radius (must be >= 1)
 	//multiplied by pluto's aphelion
 
 
 	//TODO List:
 	/*
-	 * test breeding of sims with many satellites
 	 * Write fitness function
 	 * write outer loop of generations
 	 *

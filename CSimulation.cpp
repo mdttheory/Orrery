@@ -7,7 +7,37 @@
 
 #include "CSimulation.h"
 
+bool fuelLesserCompare(CSatellite lhs, CSatellite rhs){
+		return(lhs.m_fuel<rhs.m_fuel);
+}
+
 CSimulation::CSimulation(CSolarSystem solarSystem, Par* par, string name, unsigned short coreNum, unsigned int genNum) {
+	m_par = par;
+	m_name = name;
+	m_coreNum = coreNum;
+	m_genNum = genNum;
+	m_SS = solarSystem;
+	CCoordSet tempSet;
+	for (unsigned int i = 0; i<m_par->satsPerCore;i++){
+		SatName newSatelliteName;
+		newSatelliteName.coreNum=coreNum;
+		newSatelliteName.genNum=genNum;
+		CSatellite a(m_par, &m_SS, newSatelliteName);
+		a.m_name.selfID=a.unsignedLongLongRand();
+
+		tempSet = m_SS.getPlanetDynamics(a.m_homePlanetName);
+		//tempSet.m_velocity.m_y += solarSystem.m_planets[3].calcEscapeVel(6371000)*((i-2.0)/2.0);
+		tempSet.m_position.m_y = -tempSet.m_position.m_y+m_SS.getPlanetRadius(a.m_homePlanetName);
+		a.setDynamics(tempSet);
+		a.m_startDynamics = tempSet;
+
+		a.m_thrusts[a.m_thrusts.size()-1].m_t[0]=0;
+
+		m_SS.m_sats.push_back(a);
+	}
+}
+
+CSimulation::CSimulation(CSolarSystem solarSystem, Par* par, string name, vector<CSatellite> sats, unsigned short coreNum, unsigned int genNum) {
 	m_par = par;
 	m_name = name;
 	m_coreNum = coreNum;
@@ -15,49 +45,142 @@ CSimulation::CSimulation(CSolarSystem solarSystem, Par* par, string name, unsign
 	m_SS = solarSystem;
 	vector<bool> flag;
 	CCoordSet tempSet;
-	for (unsigned int i = 0; i<m_par->satsPerCore;i++){
-		SatName newSatelliteName;
-		newSatelliteName.coreNum=coreNum;
-		newSatelliteName.genNum=genNum;
-		CSatellite a(m_par, &m_SS, newSatelliteName, flag);
-		a.m_name.selfID=a.unsignedLongLongRand();
 
-		tempSet = m_SS.getPlanetDynamics(a.m_homePlanetName);
-		//tempSet.m_velocity.m_y += solarSystem.m_planets[3].calcEscapeVel(6371000)*((i-2.0)/2.0);
-		tempSet.m_position.m_y = -tempSet.m_position.m_y+m_SS.getPlanetRadius(a.m_homePlanetName);
-		a.setDynamics(tempSet);
-
-		a.m_thrusts[a.m_thrusts.size()-1].m_t[0]=0;
-
-		m_SS.m_sats.push_back(a);
-	}
-
-	m_SS.m_sats[0].getDynamicsPtr()->m_position.m_x=m_par->boundaryDistanceSquared*2;
-
-
+	m_SS.m_sats = sats;
 }
 
-CSimulation::CSimulation(CSolarSystem solarSystem, Par* par, string name, CSimulation b, CSimulation c, unsigned short coreNum) {
+CSimulation CSimulation::operator=(const CSimulation &rhs) {
+	m_name = rhs.m_name;
+	m_coreNum = rhs.m_coreNum;
+	m_genNum = rhs.m_genNum;
+	m_par = rhs.m_par;
+	m_succList = rhs.m_succList;
+	m_breedList = rhs.m_breedList;
+	m_deadList = rhs.m_deadList;
+	m_SS = rhs.m_SS;
+	return *this;
+}
+
+
+CSimulation::CSimulation(string name, Par* par, const CSolarSystem solarSystem, CSimulation b, unsigned short coreNum) {
 	//TODO check vs init constructor
 
 	m_par = par;
 	m_name = name;
 	m_SS = solarSystem;
+	m_SS.m_sats.clear();
 	m_coreNum = coreNum;
 	m_genNum = b.m_genNum + 1;
 	vector<bool> flag;
 	CCoordSet tempSet;
+
+	vector<CSatellite> loserList;
+
+	loserList.reserve( m_deadList.size() + b.m_SS.m_sats.size() ); // preallocate memory
+	loserList.insert( loserList.end(), m_deadList.begin(), m_deadList.end() );
+	loserList.insert( loserList.end(), b.m_SS.m_sats.begin(), b.m_SS.m_sats.end() );
+
+	unsigned seed = chrono::high_resolution_clock::now().time_since_epoch().count()+m_coreNum;
+	default_random_engine gen(seed);
+
+	//fill the success portion
+	unsigned int succUses = 0;
+	sort(m_succList.begin(), m_succList.end(),fuelLesserCompare);
+	if (m_succList.size()>=m_par->breedingNum-m_par->randomBreedingNum){
+		//enough successes
+		succUses = m_par->breedingNum-m_par->randomBreedingNum;
+	}
+	else{
+		//not enough successes
+		succUses = m_succList.size();
+	}
+	for(unsigned int i = 0; i< succUses;i++){
+		m_breedList.push_back(m_succList[i]);
+	}
+	for(unsigned int i = succUses; i< m_succList.size();i++){
+		loserList.push_back(m_succList[i]);
+	}
+	uniform_int_distribution<int> dist(0,loserList.size()-1);
+	for(unsigned int i = succUses; i<m_par->breedingNum+m_par->randomBreedingNum;i++ )
+	{
+		m_breedList.push_back(loserList[dist(gen)]);
+	}
+	uniform_int_distribution<int> dist2(0,m_breedList.size()-1);
+	for(unsigned int x = 0; x<m_par->satsPerCore;x++){
+
+		m_SS.m_sats.push_back(m_breedList[dist2(gen)]*m_breedList[dist2(gen)]);
+	}
+
+/*
 	for (unsigned int i = 0; i<m_par->satsPerCore;i++){
 		CSatellite a(b.m_SS.m_sats[i], flag);
-		a = b.m_SS.m_sats[i]*c.m_SS.m_sats[i];
+		a = (b.m_SS.m_sats[i]*c.m_SS.m_sats[i]);
 		tempSet = m_SS.getPlanetDynamics(a.m_homePlanetName);
 		//TODO Set velocity based on thrust[0] (force thrust[0] to start at t=0)
 		tempSet.m_velocity.m_x = tempSet.m_velocity.m_y*10*i;
 		a.setDynamics(tempSet);
 		m_SS.m_sats.push_back(a);
 	}
+*/
+
+}
+
+CSimulation CSimulation::operator*(const CSimulation &rhs){
+	CSolarSystem newSS(m_par);
+	newSS.m_sats.clear();
+	//m_genNum+=1;
+	CSimulation newSim(newSS, m_par, this->m_name, this->m_coreNum, (m_genNum)+1);
+
+	CCoordSet tempSet;
+	vector<CSatellite> loserList;
+	cout << "-----------------------------\n";
+	for(unsigned int i = 0; i<m_deadList.size();i++){
+		loserList.push_back(m_deadList[i]);
+	}
+	for(unsigned int i = 0; i<rhs.m_SS.m_sats.size();i++){
+			loserList.push_back(rhs.m_SS.m_sats[i]);
+	}
+
+//	loserList.reserve( m_deadList.size() + rhs.m_SS.m_sats.size() ); // preallocate memory
+//	loserList.insert( loserList.end(), m_deadList.begin(), m_deadList.end() );
+//	loserList.insert( loserList.end(), rhs.m_SS.m_sats.begin(), rhs.m_SS.m_sats.end() );
+	int y = 0;
+	unsigned seed = chrono::high_resolution_clock::now().time_since_epoch().count()+m_coreNum;
+	default_random_engine gen(seed);
+
+	//fill the success portion
+	unsigned int succUses = 0;
+	sort(m_succList.begin(), m_succList.end(),fuelLesserCompare);
+
+	if (m_succList.size()>=m_par->breedingNum-m_par->randomBreedingNum){
+		//enough successes
+		succUses = m_par->breedingNum-m_par->randomBreedingNum;
+	}
+	else{
+		//not enough successes
+		succUses = m_succList.size();
+	}
+	for(unsigned int i = 0; i< succUses;i++){
+		m_breedList.push_back(m_succList[i]);
+	}
+	for(unsigned int i = succUses; i< m_succList.size();i++){
+		loserList.push_back(m_succList[i]);
+	}
+
+	uniform_int_distribution<int> dist(0,loserList.size()-1);
+	for(unsigned int i = succUses; i<m_par->breedingNum;i++ )
+	{
+		int r = dist(gen);
+		m_breedList.push_back(loserList[r]);
+	}
+	uniform_int_distribution<int> dist2(0,m_breedList.size()-1);
+	for(unsigned int x = 0; x<m_par->satsPerCore;x++){
+
+		newSim.m_SS.m_sats.push_back(m_breedList[dist2(gen)]*m_breedList[dist2(gen)]);
+	}
 
 
+	return *this;
 }
 
 CSimulation::~CSimulation() {
@@ -67,11 +190,11 @@ void CSimulation::Euler(CSVector &pos_i, CSVector &vel_i, string name){
 	float dt = m_par->dt;
 	CSVector new_pos = pos_i + vel_i*dt;
 	bool temp = false;
-	vel_i += CalcA(pos_i,name,temp,dt)*dt;
+	vel_i += CalcA(pos_i,name,temp,temp,dt)*dt;
 	pos_i = new_pos;
 }
 
-void CSimulation::RK(CSVector &pos_i, CSVector &vel_i, bool &delFlag, string name) {
+void CSimulation::RK(CSVector &pos_i, CSVector &vel_i, bool &delFlag, bool &succFlag, string name) {
 	// http://doswa.com/2009/01/02/fourth-order-runge-kutta-numerical-integration.html
 
 	float dt = m_par->dt;
@@ -83,19 +206,19 @@ void CSimulation::RK(CSVector &pos_i, CSVector &vel_i, bool &delFlag, string nam
 		CSVector pos[4], vel[4], acc[4];
 		pos[0] = pos_i;
 		vel[0] = vel_i;
-		acc[0] = CalcA(pos[0], name, delFlag, dt / 2.0);
+		acc[0] = CalcA(pos[0], name, delFlag, succFlag, dt / 2.0);
 
 		pos[1] = pos_i + vel[0] * (dt * 0.5);
 		vel[1] = vel_i + acc[0] * (dt * 0.5);
-		acc[1] = CalcA(pos[1], name, delFlag, dt / 2.0);
+		acc[1] = CalcA(pos[1], name, delFlag, succFlag, dt / 2.0);
 
 		pos[2] = pos_i + vel[1] * (dt * 0.5);
 		vel[2] = vel_i + acc[1] * (dt * 0.5);
-		acc[2] = CalcA(pos[2], name, delFlag, dt / 2.0);
+		acc[2] = CalcA(pos[2], name, delFlag, succFlag, dt / 2.0);
 
 		pos[3] = pos_i + vel[2] * dt;
 		vel[3] = vel_i + acc[2] * dt;
-		acc[3] = CalcA(pos[3], name, delFlag, dt);
+		acc[3] = CalcA(pos[3], name, delFlag, succFlag, dt);
 
 		pos_i += (vel[0] + vel[1] * 2.0 + vel[2] * 2.0 + vel[3]) * (dt / 6.0);
 		vel_i += (acc[0] + acc[1] * 2.0 + acc[2] * 2.0 + acc[3]) * (dt / 6.0);
@@ -127,7 +250,7 @@ void CSimulation::RK(CSVector &pos_i, CSVector &vel_i, bool &delFlag, string nam
 //	return (sum * dt * G);
 //}
 
-CSVector CSimulation::CalcA(CSVector pos, string name, bool &delFlag, float dt) {
+CSVector CSimulation::CalcA(CSVector pos, string name, bool &delFlag, bool &succFlag, float dt) {
 	CSVector sum, r_vec;
 	double dist;
 
@@ -141,6 +264,9 @@ CSVector CSimulation::CalcA(CSVector pos, string name, bool &delFlag, float dt) 
 			if (dist < it->m_radius){
 				cout << "Collision for satellite ";
 				delFlag = true;
+				if (m_par->destinationPlanetName==it->m_name){
+					succFlag = true;
+				}
 			}
 			else{
 				double dist_cubed = pow(dist, 3);
@@ -150,6 +276,11 @@ CSVector CSimulation::CalcA(CSVector pos, string name, bool &delFlag, float dt) 
 					r_vec = it->getDynamics().m_position + pos * -1.0;
 					sum += (r_vec / dist_cubed) * (it->m_mass);
 				}
+			}
+			if (m_par->destinationPlanetName==it->m_name && dist < it->m_radius*m_par->goalDistanceMultiplier){
+				cout << "Noncollision success for satellite ";
+				succFlag = true;
+				delFlag = true;
 			}
 		}
 
@@ -186,17 +317,19 @@ void CSimulation::update(unsigned long currStep) {
 	for (vector<CSatellite>::iterator it = newSS.m_sats.begin();
 				it < newSS.m_sats.end(); it++) {
 		if(it->m_thrusts.size()>0 && it->m_thrusts[it->m_thrusts.size()-1].m_t[0]-currStep < .5){
-			it->getDynamicsPtr()->m_velocity.m_x+=it->m_thrusts[it->m_thrusts.size()-1].m_dvx[0];
-			it->getDynamicsPtr()->m_velocity.m_y+=it->m_thrusts[it->m_thrusts.size()-1].m_dvy[0];
-			it->getDynamicsPtr()->m_velocity.m_z+=it->m_thrusts[it->m_thrusts.size()-1].m_dvz[0];
+			CSVector a(it->m_thrusts[it->m_thrusts.size()-1].m_dvx[0],
+					it->m_thrusts[it->m_thrusts.size()-1].m_dvy[0],
+					it->m_thrusts[it->m_thrusts.size()-1].m_dvz[0]);
+			it->getDynamicsPtr()->m_velocity+=a;
+			it->m_fuel+=a.magSquared();
 			it->m_thrusts.pop_back();
 		}
 	}
-
+	bool temp = false;
 	for (vector<CPlanet>::iterator it = newSS.m_planets.begin();
 				it < newSS.m_planets.end(); it++) {
 		if (m_par->integration_method == 4) {
-			RK(it->getDynamicsPtr()->m_position, it->getDynamicsPtr()->m_velocity, it->m_delFlag, it->m_name);
+			RK(it->getDynamicsPtr()->m_position, it->getDynamicsPtr()->m_velocity, it->m_delFlag, temp, it->m_name);
 		}
 		else if (m_par->integration_method == 1) {
 			Euler(it->getDynamicsPtr()->m_position, it->getDynamicsPtr()->m_velocity, it->m_name);
@@ -209,7 +342,7 @@ void CSimulation::update(unsigned long currStep) {
 	for (vector<CSatellite>::iterator it = newSS.m_sats.begin();
 					it < newSS.m_sats.end(); it++) {
 			if (m_par->integration_method == 4) {
-				RK(it->getDynamicsPtr()->m_position, it->getDynamicsPtr()->m_velocity, it->m_delFlag, "Satellite");
+				RK(it->getDynamicsPtr()->m_position, it->getDynamicsPtr()->m_velocity, it->m_delFlag,it->m_succFlag, "Satellite");
 			}
 			else if (m_par->integration_method == 1) {
 				Euler(it->getDynamicsPtr()->m_position, it->getDynamicsPtr()->m_velocity, "Satellite");
@@ -221,10 +354,14 @@ void CSimulation::update(unsigned long currStep) {
 	}
 	unsigned int i = 0;
 
+
 	//remove all flagged sats
 	while(newSS.m_sats.begin()+i!=newSS.m_sats.end()){
-		int x = newSS.m_sats.size();
 		if (newSS.m_sats[i].m_delFlag){
+			if(newSS.m_sats[i].m_succFlag)m_succList.push_back(newSS.m_sats[i]);
+			else{
+				m_deadList.push_back(newSS.m_sats[i]);
+			}
 			cout << newSS.m_sats[i].m_name.selfID << " at timestep " << currStep <<  "\n";
 			newSS.m_sats.erase(newSS.m_sats.begin()+i);
 		}

@@ -37,7 +37,7 @@ public:
 	bool operator>=(const CChromosome& rhs);
 	bool operator<=(const CChromosome& rhs);
 	CChromosome operator=(const CChromosome& rhs);
-	vector<float> operator[](int nIndex);
+	vector<float> *operator[](int nIndex);
 
 
 //	friend ostream &operator<<(ostream &output, CChromosome &chrom) {

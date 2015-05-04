@@ -26,7 +26,7 @@ bool thrustGreaterCompare(CChromosome lhs, CChromosome rhs){
 }
 
 
-CSatellite::CSatellite(Par* par, CSolarSystem* ss, SatName name, vector<bool> flag) : CPlanet(flag) {
+CSatellite::CSatellite(Par* par, CSolarSystem* ss, SatName name) : CPlanet() {
 
 	m_thrustQuant = par->thrustQuant;
 	for(int i = 0; i < m_thrustQuant; i++){
@@ -36,26 +36,25 @@ CSatellite::CSatellite(Par* par, CSolarSystem* ss, SatName name, vector<bool> fl
 	sort(m_thrusts.begin(), m_thrusts.end(),thrustGreaterCompare);
 
 	m_homePlanetName = par->homePlanetName;
-	m_fuel = par->startFuel;
+	m_fuel = 0;
 	m_ss = ss;
 	m_mass = par->satMass;
 	m_perihelion = -1;
 	m_aphelion = -1;
 	CCoordSet m_dynamics;
+	CCoordSet m_startDynamics;
 	m_name = name;
 	m_dynamicsSet = false;
 	m_angle = -1;
 	m_delFlag = false;
 	m_radius = 0;
-	m_success = false;
+	m_succFlag = false;
 
 }
 
-CSatellite::CSatellite(CSatellite rhs, vector<bool> flag) : CPlanet(flag) {
-
+CSatellite::CSatellite(const CSatellite &rhs){
 	m_thrustQuant = rhs.m_thrustQuant;
 	m_thrusts = rhs.m_thrusts;
-
 	m_homePlanetName = rhs.m_homePlanetName;
 	m_fuel = rhs.m_fuel;
 	m_ss = rhs.m_ss;
@@ -68,7 +67,31 @@ CSatellite::CSatellite(CSatellite rhs, vector<bool> flag) : CPlanet(flag) {
 	m_angle = rhs.m_angle;
 	m_delFlag = false;
 	m_radius = rhs.m_radius;
-	m_success = false;
+	m_startDynamics = rhs.m_startDynamics;
+	m_succFlag = false;
+	m_par = rhs.m_par;
+}
+
+
+CSatellite::CSatellite(CSatellite rhs, vector<bool> flag) {
+
+	m_thrustQuant = rhs.m_thrustQuant;
+	m_thrusts = rhs.m_thrusts;
+	m_homePlanetName = rhs.m_homePlanetName;
+	m_fuel = rhs.m_fuel;
+	m_ss = rhs.m_ss;
+	m_mass = rhs.m_mass;
+	m_perihelion = rhs.m_perihelion;
+	m_aphelion = rhs.m_aphelion;
+	m_dynamics = rhs.m_dynamics;
+	m_name = rhs.m_name;
+	m_dynamicsSet = rhs.m_dynamicsSet;
+	m_angle = rhs.m_angle;
+	m_delFlag = false;
+	m_radius = rhs.m_radius;
+	m_startDynamics = rhs.m_startDynamics;
+	m_succFlag = false;
+	m_par = rhs.m_par;
 }
 
 CSatellite CSatellite::operator*(CSatellite& rhs)
@@ -81,10 +104,19 @@ CSatellite CSatellite::operator*(CSatellite& rhs)
 	for(unsigned int i = 0; i<rhs.m_thrusts.size();i++){
 		newSat.m_thrusts[i]	= rhs.m_thrusts[i]*(this->m_thrusts[i]);
 	}
+	sort(newSat.m_thrusts.begin(), newSat.m_thrusts.end(),thrustGreaterCompare);
+	int x  = newSat.m_thrusts.size();
+	newSat.m_thrusts[newSat.m_thrusts.size()-1].m_t[0]=0;
 	newSat.m_name.genNum++;
 	newSat.m_name.momID = m_name.selfID;
 	newSat.m_name.dadID = rhs.m_name.selfID;
 	newSat.m_name.selfID = unsignedLongLongRand();
+
+
+	newSat.setDynamics(m_startDynamics);
+	m_fuel = 0;
+	m_delFlag = false;
+	m_succFlag = false;
 
 	return newSat;
 }
@@ -107,10 +139,12 @@ CSatellite CSatellite::operator=(const CSatellite& rhs)
 	m_dynamics = rhs.m_dynamics;
 	m_name = rhs.m_name;
 	m_dynamicsSet = rhs.m_dynamicsSet;
+	m_startDynamics = rhs.m_startDynamics;
 	m_angle = rhs.m_angle;
 	m_delFlag = false;
 	m_radius = rhs.m_radius;
-	m_success = false;
+	m_succFlag = false;
+	m_par = rhs.m_par;
 
 	return *this;
 }
@@ -119,7 +153,7 @@ CSatellite::CSatellite() {
 	m_fuel = -1;
 	m_thrustQuant = -1;
 	m_dynamicsSet = false;
-	m_success = false;
+	m_succFlag = false;
 	cout << "ERROR: Default constructor of CSatellite called.\n";
 }
 
@@ -141,4 +175,5 @@ void CSatellite::setDynamics(CCoordSet dynamics){
 	m_dynamicsSet = true;
 	return;
 }
+
 
