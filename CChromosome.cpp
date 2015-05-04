@@ -6,6 +6,12 @@
  */
 
 #include "CChromosome.h"
+CChromosome::CChromosome(){
+	cout << "Default constructor of CChrom used\n";
+	m_par = NULL;
+	m_coreNum = 0;
+}
+
 
 CChromosome::CChromosome(Par* par, unsigned short coreNum) {
 	for(unsigned short i = 0; i<3;i++){
@@ -42,6 +48,7 @@ CChromosome::CChromosome(Par* par, unsigned short coreNum) {
 }
 
 CChromosome::CChromosome(const CChromosome &rhs) {
+
 	m_par = rhs.m_par;
 	m_coreNum = rhs.m_coreNum;
 
@@ -75,6 +82,8 @@ CChromosome::~CChromosome() {
 
 
 CChromosome CChromosome::operator=(const CChromosome& rhs){
+
+	m_par->G = rhs.m_par->G;
 	m_par = rhs.m_par;
 
 	m_dvx[1] = rhs.m_dvx[1];

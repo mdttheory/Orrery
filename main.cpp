@@ -80,9 +80,8 @@ int main()
 		//CSimulation a(string("RKSim"), &par, newSS, RKSim, 0);
 		//a.genePrint(string(string("Generation#: ")+to_string(g)));
 		RKSim = RKSim*RKSim;
-		RKSim.genePrint("derp");
+		RKSim.genePrint("Gene");
 		//RKSim = a;
-		cout << "hi\n";
 	}
 	param_of.close();
 

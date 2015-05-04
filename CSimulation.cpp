@@ -38,6 +38,8 @@ CSimulation::CSimulation(CSolarSystem solarSystem, Par* par, string name, unsign
 }
 
 CSimulation::CSimulation(CSolarSystem solarSystem, Par* par, string name, vector<CSatellite> sats, unsigned short coreNum, unsigned int genNum) {
+
+
 	m_par = par;
 	m_name = name;
 	m_coreNum = coreNum;
@@ -61,75 +63,74 @@ CSimulation CSimulation::operator=(const CSimulation &rhs) {
 	return *this;
 }
 
-
-CSimulation::CSimulation(string name, Par* par, const CSolarSystem solarSystem, CSimulation b, unsigned short coreNum) {
-	//TODO check vs init constructor
-
-	m_par = par;
-	m_name = name;
-	m_SS = solarSystem;
-	m_SS.m_sats.clear();
-	m_coreNum = coreNum;
-	m_genNum = b.m_genNum + 1;
-	vector<bool> flag;
-	CCoordSet tempSet;
-
-	vector<CSatellite> loserList;
-
-	loserList.reserve( m_deadList.size() + b.m_SS.m_sats.size() ); // preallocate memory
-	loserList.insert( loserList.end(), m_deadList.begin(), m_deadList.end() );
-	loserList.insert( loserList.end(), b.m_SS.m_sats.begin(), b.m_SS.m_sats.end() );
-
-	unsigned seed = chrono::high_resolution_clock::now().time_since_epoch().count()+m_coreNum;
-	default_random_engine gen(seed);
-
-	//fill the success portion
-	unsigned int succUses = 0;
-	sort(m_succList.begin(), m_succList.end(),fuelLesserCompare);
-	if (m_succList.size()>=m_par->breedingNum-m_par->randomBreedingNum){
-		//enough successes
-		succUses = m_par->breedingNum-m_par->randomBreedingNum;
-	}
-	else{
-		//not enough successes
-		succUses = m_succList.size();
-	}
-	for(unsigned int i = 0; i< succUses;i++){
-		m_breedList.push_back(m_succList[i]);
-	}
-	for(unsigned int i = succUses; i< m_succList.size();i++){
-		loserList.push_back(m_succList[i]);
-	}
-	uniform_int_distribution<int> dist(0,loserList.size()-1);
-	for(unsigned int i = succUses; i<m_par->breedingNum+m_par->randomBreedingNum;i++ )
-	{
-		m_breedList.push_back(loserList[dist(gen)]);
-	}
-	uniform_int_distribution<int> dist2(0,m_breedList.size()-1);
-	for(unsigned int x = 0; x<m_par->satsPerCore;x++){
-
-		m_SS.m_sats.push_back(m_breedList[dist2(gen)]*m_breedList[dist2(gen)]);
-	}
-
-/*
-	for (unsigned int i = 0; i<m_par->satsPerCore;i++){
-		CSatellite a(b.m_SS.m_sats[i], flag);
-		a = (b.m_SS.m_sats[i]*c.m_SS.m_sats[i]);
-		tempSet = m_SS.getPlanetDynamics(a.m_homePlanetName);
-		//TODO Set velocity based on thrust[0] (force thrust[0] to start at t=0)
-		tempSet.m_velocity.m_x = tempSet.m_velocity.m_y*10*i;
-		a.setDynamics(tempSet);
-		m_SS.m_sats.push_back(a);
-	}
-*/
-
-}
+//
+//CSimulation::CSimulation(string name, Par* par, const CSolarSystem solarSystem, CSimulation b, unsigned short coreNum) {
+//	//TODO check vs init constructor
+//
+//	m_par = par;
+//	m_name = name;
+//	m_SS = solarSystem;
+//	m_SS.m_sats.clear();
+//	m_coreNum = coreNum;
+//	m_genNum = b.m_genNum + 1;
+//	vector<bool> flag;
+//	CCoordSet tempSet;
+//
+//	vector<CSatellite> loserList;
+//
+//	loserList.reserve( m_deadList.size() + b.m_SS.m_sats.size() ); // preallocate memory
+//	loserList.insert( loserList.end(), m_deadList.begin(), m_deadList.end() );
+//	loserList.insert( loserList.end(), b.m_SS.m_sats.begin(), b.m_SS.m_sats.end() );
+//
+//	unsigned seed = chrono::high_resolution_clock::now().time_since_epoch().count()+m_coreNum;
+//	default_random_engine gen(seed);
+//
+//	//fill the success portion
+//	unsigned int succUses = 0;
+//	sort(m_succList.begin(), m_succList.end(),fuelLesserCompare);
+//	if (m_succList.size()>=m_par->breedingNum-m_par->randomBreedingNum){
+//		//enough successes
+//		succUses = m_par->breedingNum-m_par->randomBreedingNum;
+//	}
+//	else{
+//		//not enough successes
+//		succUses = m_succList.size();
+//	}
+//	for(unsigned int i = 0; i< succUses;i++){
+//		m_breedList.push_back(m_succList[i]);
+//	}
+//	for(unsigned int i = succUses; i< m_succList.size();i++){
+//		loserList.push_back(m_succList[i]);
+//	}
+//	uniform_int_distribution<int> dist(0,loserList.size()-1);
+//	for(unsigned int i = succUses; i<m_par->breedingNum+m_par->randomBreedingNum;i++ )
+//	{
+//		m_breedList.push_back(loserList[dist(gen)]);
+//	}
+//	uniform_int_distribution<int> dist2(0,m_breedList.size()-1);
+//	for(unsigned int x = 0; x<m_par->satsPerCore;x++){
+//
+//		m_SS.m_sats.push_back(m_breedList[dist2(gen)]*m_breedList[dist2(gen)]);
+//	}
+//
+///*
+//	for (unsigned int i = 0; i<m_par->satsPerCore;i++){
+//		CSatellite a(b.m_SS.m_sats[i], flag);
+//		a = (b.m_SS.m_sats[i]*c.m_SS.m_sats[i]);
+//		tempSet = m_SS.getPlanetDynamics(a.m_homePlanetName);
+//		//TODO Set velocity based on thrust[0] (force thrust[0] to start at t=0)
+//		tempSet.m_velocity.m_x = tempSet.m_velocity.m_y*10*i;
+//		a.setDynamics(tempSet);
+//		m_SS.m_sats.push_back(a);
+//	}
+//*/
+//
+//}
 
 CSimulation CSimulation::operator*(const CSimulation &rhs){
-	CSolarSystem newSS(m_par);
-	newSS.m_sats.clear();
-	//m_genNum+=1;
-	CSimulation newSim(newSS, m_par, this->m_name, this->m_coreNum, (m_genNum)+1);
+	CSolarSystem newSS(rhs.m_SS);
+	CSimulation newSim(rhs);
+	newSim.m_SS.m_sats.clear();
 
 	CCoordSet tempSet;
 	vector<CSatellite> loserList;
@@ -141,10 +142,6 @@ CSimulation CSimulation::operator*(const CSimulation &rhs){
 			loserList.push_back(rhs.m_SS.m_sats[i]);
 	}
 
-//	loserList.reserve( m_deadList.size() + rhs.m_SS.m_sats.size() ); // preallocate memory
-//	loserList.insert( loserList.end(), m_deadList.begin(), m_deadList.end() );
-//	loserList.insert( loserList.end(), rhs.m_SS.m_sats.begin(), rhs.m_SS.m_sats.end() );
-	int y = 0;
 	unsigned seed = chrono::high_resolution_clock::now().time_since_epoch().count()+m_coreNum;
 	default_random_engine gen(seed);
 
@@ -179,8 +176,7 @@ CSimulation CSimulation::operator*(const CSimulation &rhs){
 		newSim.m_SS.m_sats.push_back(m_breedList[dist2(gen)]*m_breedList[dist2(gen)]);
 	}
 
-
-	return *this;
+	return newSim;
 }
 
 CSimulation::~CSimulation() {
@@ -385,3 +381,27 @@ void CSimulation::genePrint(string simName){
 		n++;
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -16,6 +16,7 @@ class CChromosome {
 public:
 	CChromosome(Par* par, unsigned short coreNum);
 	CChromosome(const CChromosome &rhs);
+	CChromosome();
 	virtual ~CChromosome();
 	Par* m_par;
 

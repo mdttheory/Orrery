@@ -34,6 +34,8 @@ CSatellite::CSatellite(Par* par, CSolarSystem* ss, SatName name) : CPlanet() {
 		m_thrusts.push_back(a);
 	}
 	sort(m_thrusts.begin(), m_thrusts.end(),thrustGreaterCompare);
+	m_thrusts[m_thrusts.size()-1].m_t[0]=0;
+	m_thrustsBackup = m_thrusts;
 
 	m_homePlanetName = par->homePlanetName;
 	m_fuel = 0;
@@ -51,6 +53,7 @@ CSatellite::CSatellite(Par* par, CSolarSystem* ss, SatName name) : CPlanet() {
 	m_succFlag = false;
 
 }
+
 
 CSatellite::CSatellite(const CSatellite &rhs){
 	m_thrustQuant = rhs.m_thrustQuant;
@@ -70,6 +73,7 @@ CSatellite::CSatellite(const CSatellite &rhs){
 	m_startDynamics = rhs.m_startDynamics;
 	m_succFlag = false;
 	m_par = rhs.m_par;
+	m_thrustsBackup = rhs.m_thrustsBackup;
 }
 
 
@@ -91,6 +95,7 @@ CSatellite::CSatellite(CSatellite rhs, vector<bool> flag) {
 	m_radius = rhs.m_radius;
 	m_startDynamics = rhs.m_startDynamics;
 	m_succFlag = false;
+	m_thrustsBackup = rhs.m_thrustsBackup;
 	m_par = rhs.m_par;
 }
 
@@ -101,12 +106,13 @@ CSatellite CSatellite::operator*(CSatellite& rhs)
 	}
 	vector<bool> flag;
 	CSatellite newSat(rhs, flag);
-	for(unsigned int i = 0; i<rhs.m_thrusts.size();i++){
-		newSat.m_thrusts[i]	= rhs.m_thrusts[i]*(this->m_thrusts[i]);
+	newSat.m_thrusts.clear();
+	for(unsigned int i = 0; i<rhs.m_thrustsBackup.size();i++){
+		newSat.m_thrusts.push_back(rhs.m_thrustsBackup[i]*(this->m_thrustsBackup[i]));
 	}
 	sort(newSat.m_thrusts.begin(), newSat.m_thrusts.end(),thrustGreaterCompare);
-	int x  = newSat.m_thrusts.size();
 	newSat.m_thrusts[newSat.m_thrusts.size()-1].m_t[0]=0;
+	newSat.m_thrustsBackup=newSat.m_thrusts;
 	newSat.m_name.genNum++;
 	newSat.m_name.momID = m_name.selfID;
 	newSat.m_name.dadID = rhs.m_name.selfID;
@@ -145,6 +151,7 @@ CSatellite CSatellite::operator=(const CSatellite& rhs)
 	m_radius = rhs.m_radius;
 	m_succFlag = false;
 	m_par = rhs.m_par;
+	m_thrustsBackup = rhs.m_thrustsBackup;
 
 	return *this;
 }
@@ -165,7 +172,7 @@ void CSatellite::printThrust(ostream &output){
 			cout << "WARNING: m_dynamics not set for satellite: " << m_name.selfID << ".\n";
 		}
 	for(int i = 0; i < m_thrustQuant; i++){
-		m_thrusts[i].printChrom(output);
+		m_thrustsBackup[i].printChrom(output);
 	}
 	output << "\n";
 }

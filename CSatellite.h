@@ -29,6 +29,7 @@ public:
 	int m_thrustQuant;
 	string m_homePlanetName;
 	vector<CChromosome> m_thrusts;
+	vector<CChromosome> m_thrustsBackup;
 	void printThrust(ostream &output);
 	void setDynamics(CCoordSet dynamics);
 	CSatellite operator*(CSatellite& rhs);

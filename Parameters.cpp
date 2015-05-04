@@ -25,10 +25,10 @@ struct Par{
 
 	//Single simulation integration parameters
 	float dt = 1*pow(10,4);
-	float maxT = 0*10000*dt;
+	float maxT = 10000*dt;
 	unsigned long int maxTimeSteps = (maxT/dt);
 	unsigned short integration_method = 4;
-	unsigned short print_freq = 1000000000;
+	unsigned short print_freq = 2500;
 	//0 = errorflag
 	//1 = Euler
 	//2 = 2nd order Runga-Kutta
@@ -37,9 +37,9 @@ struct Par{
 	//GA Params
 	float mutateChance = .2;
 	unsigned int satsPerCore = 10;
-	unsigned int maxGenerations = 3;
-	float breedingNum = 3;//10 will breed
-	float randomBreedingNum = 1;//2 of breeding pop will be selected without bias for fitness
+	unsigned int maxGenerations = 1;
+	float breedingNum = 10;//# will breed
+	float randomBreedingNum = 1;//# of breeding pop will be selected without bias for fitness
 
 	// Satellite params
 	float maxThrusterVel = 30000;
