@@ -8,7 +8,6 @@
 #include "CCoordSet.h"
 
 CCoordSet::CCoordSet() {
-	// TODO Auto-generated constructor stub
 	CSVector zero;
 	m_position =zero;
 	m_velocity =zero;
@@ -17,7 +16,6 @@ CCoordSet::CCoordSet() {
 }
 
 CCoordSet::CCoordSet(CSVector pos, CSVector vel, CSVector acc) {
-	// TODO Auto-generated constructor stub
 	m_position = pos;
 	m_velocity = vel;
 	m_acceleration = acc;
@@ -34,7 +32,6 @@ CCoordSet CCoordSet::operator=(const CCoordSet& rhs)
 }
 
 CCoordSet::CCoordSet(const CCoordSet& other) {
-	// TODO Auto-generated constructor stub
 	m_position = other.m_position;
 	m_velocity = other.m_velocity;
 	m_acceleration = other.m_acceleration;
@@ -42,6 +39,5 @@ CCoordSet::CCoordSet(const CCoordSet& other) {
 }
 
 CCoordSet::~CCoordSet() {
-	// TODO Auto-generated destructor stub
 }
 

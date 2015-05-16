@@ -6,7 +6,7 @@ import math
 
 
 f = open("data/raw_positions.txt")
-numSats = 5
+numSats = 7
 
 n = 0
 data = [[]]
@@ -73,7 +73,19 @@ for i in range(0,n):
 		plt.savefig('images/Sats/TopDown/TopDown'+str(i)+'.png', bbox_inches='tight')
 		plt.close()
 
-
+		fig = plt.figure()
+		ax = fig.add_subplot(111)
+		for j in range(0,len(data[i])):
+				ax.scatter(data[i][j][0], data[i][j][2],c=colors[j],s=sizes[j])
+		for sat in range(0,len(satData)):
+			ax.scatter(satData[sat][0][:i],satData[sat][2][:i],c=trailColors[sat],edgecolors=trailColors[sat],s=(sizes[9]/10.0))
+		ax.set_xlabel('X (billion kilometers)')
+		ax.set_ylabel('Z (billion kilometers)')
+		plt.xlim([-.3,.3])
+		plt.ylim([-.3,.3])
+		plt.title('Position at timestep '+str(i))
+		plt.savefig('images/Sats/Front/Front'+str(i)+'.png', bbox_inches='tight')
+		plt.close()
 
 
 		#fig = plt.figure()

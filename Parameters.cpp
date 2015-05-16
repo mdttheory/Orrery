@@ -25,39 +25,49 @@ struct Par{
 
 	//Single simulation integration parameters
 	float dt = 1*pow(10,4);
-	float maxT = 12*1000*dt;
+	float maxT = 5*23740*dt;
 	unsigned long int maxTimeSteps = (maxT/dt);
 	unsigned short integration_method = 4;
-	unsigned short print_freq = maxT/dt/30;
+	unsigned short print_freq = 1;
 	//0 = errorflag
 	//1 = Euler
 	//2 = 2nd order Runga-Kutta
 	//4 = 4th order Runga-Kutta
 
+	//Realtime for 2.4*1000000*10^4 of Mars with RK4: 1345017204 nanoseconds
+	//Realtime for 20 orbits of mars with Euler: 8:44.6
+
+	unsigned short runMode = 4;
+	//0 = errorflag
+	//1 = GA
+	//2 = plot positions
+	//3 = Energy (RK vs Euler)
+	//4 = Energy (Kinetic vs Potential)
+
 	//GA Params
 	float mutateChance = .2;
-	unsigned int satsPerCore = 50;
-	unsigned int maxGenerations = 10;
-	float breedingNum = 15;//# will breed
-	float randomBreedingNum = 10;//# of breeding pop will be selected without bias for fitness
+	unsigned int satsPerCore = 0;
+	unsigned int randSatsPerGen = 0;
+	unsigned int maxGenerations = 1;
+	float breedingNum = 0;//# will breed
+	float randomBreedingNum = 0;//# of breeding pop will be selected without bias for fitness
 
 	// Satellite params
-	float maxThrusterVel = 30000;
-	unsigned int thrustQuant = 2;
+	float maxThrusterVel = 15000;
+	unsigned int thrustQuant = 4;
 	float satMass = 722;
-	string homePlanetName = "Mercury";
+	string homePlanetName = "Earth";
 
 	//fitness params
 	string destinationPlanetName = "Mars";
-	float goalDistanceMultiplier = 6650;//multiplied by destiantion planet radius (must be >= 1)
+	float goalDistanceMultiplier = 1;//6650;//multiplied by destiantion planet radius (must be >= 1)
 	//multiplied by pluto's aphelion
 
 
 	//TODO List:
 	/*
-	 * Write fitness function
-	 * write outer loop of generations
-	 *
+	 * Mode 2 should pull satellites from success list (end)
+	 * Fix collision printing so it doesn't print multiple instances before sat name & timesteps
 	 * Parallelize loop of simulations
 	 * Write loop for parallelization
 	 * Parameter for max run time (realtime) & how often to check
